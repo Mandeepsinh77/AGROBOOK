@@ -28,17 +28,11 @@ const Login = () => {
       body: JSON.stringify(formData)
     })
     const data = await res.json();
-    console.log(data);
-    console.log(data["message"]);
-    console.log(data.data.user.username);
-    
-    const username = data.data.user.username;
-
-    setData(username);
-
 
     if (res.ok) {
       useAppState.setLogin(true);
+      const username = data.data.user.username;
+      setData(username);
       swal({
         title: "Successfully Loged In",
         icon: "success",
@@ -74,7 +68,12 @@ const Login = () => {
       validateData()
 
     } catch (err) {
-      window.alert(err);
+      swal({
+        title: err,
+        icon: "error",
+        button: false,
+        timer: 3000
+      })
     }
   };
 

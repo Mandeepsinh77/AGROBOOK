@@ -1,6 +1,7 @@
 // import "./FormInput.module.css";
 import React,{useState} from "react";
 import "./App.css"
+import swal from "sweetalert";
 
 const FormInput = () =>{
     const [formData, setFormData] = useState(
@@ -19,6 +20,7 @@ const FormInput = () =>{
 
         }
     );
+   const [currentDate,setCurrentDate] = useState(new Date());
 
     const handleSubmit = async (e) => {
         const url = "http://localhost:4000/add/createcustomer";
@@ -34,7 +36,12 @@ const FormInput = () =>{
           
           if (response.status === 200) {
             // Customer added successfully
-            alert('Customer added successfully');
+            swal({
+                title: "Customer Added Successfully",
+                icon: "success",
+                button: false,
+                timer: 3000
+            })
             // Clear the form
             setFormData({
               shopkeeperid: "",
@@ -51,23 +58,32 @@ const FormInput = () =>{
             });
           } else {
             // Handle errors if necessary
-            alert("Error Adding Customer");
-            console.error('Error adding customer');
+            swal({
+                title: "Error Adding Customer",
+                icon: "error",
+                button: false,
+                timer: 3000
+            })
           }
         } catch (error) {
-          console.error('Error adding customer:', error);
+            swal({
+                title: `Internal Server Error ${error}`,
+                icon: "error",
+                button: false,
+                timer: 3000
+            })
         }
       }
 
     return(  
         <>
        <div className="customer_form">
-                <form action="" className="customer_form_details" onSubmit={handleSubmit}>
+                <form action="" className="customer_form_details ml-12" onSubmit={handleSubmit}>
                     <h3 className="customer_head">Customer Details</h3>
                     <div className="my_form" id="mytable">
                         <div className="form-row">
                             <label htmlFor="adding_date">Date: </label> <br />
-                            <input type="date" name="adding_date" id="" placeholder="dd/mm/yyyy" required />
+                            <input type="" name="adding_date" id=""  value={currentDate.toDateString()} required/>
                         </div>
                         <div className="form-row">
                             <label htmlFor="shopkeeper_id">Shopkeeper ID:</label><br />
@@ -171,7 +187,7 @@ const FormInput = () =>{
                                 placeholder="email"
                                 required
                             />
-                            <label htmlFor="phno">Phone:</label><br />
+                            <label htmlFor="phno" className="ml-14">Phone:</label ><br />
                             <input
                                 type="text"
                                 id="phoneno"
@@ -186,7 +202,7 @@ const FormInput = () =>{
                         <div className="form-row" id="customer_form_btn">
                             <div>
                                 <button type="submit" className="form_btn">Submit</button>
-                                <button className="form_btn" id="clear_btn">Clear</button>
+                                <button className="form_btn" id="clear_btn" >Clear</button>
                             </div>
                         </div>
                     </div>

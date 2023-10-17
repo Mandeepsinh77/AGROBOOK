@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import swal from "sweetalert";
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -14,7 +15,14 @@ function CategoryList() {
     }
 
     if (categories.some((category) => category.category_name === newCategory)) {
-      alert("Category already exists."); // You can show an alert or handle it in another way
+      // alert("Category already exists."); // You can show an alert or handle it in another way
+      swal({
+        title: "Category already exists",
+        icon: "error",
+        button: false,
+        timer: 3000
+      })
+      setNewCategory("");
       return;
     }
     try {
@@ -55,10 +63,18 @@ function CategoryList() {
 
     const res = await data.json();
     console.log(res);
+    swal({
+      title: "Category Added succesfully",
+      icon: "success",
+      button: false,
+      timer: 3000
+    })
+    setNewCategory("");
+
+    fetchCategory();
   }
 
   const handleDeleteCategory = async (Id)=>{
-    window.alert(Id)
     let data = await fetch(`http://localhost:4000/category_crud/delete-Category/${Id}`,{
       method : 'delete',
       headers : {
@@ -66,6 +82,13 @@ function CategoryList() {
       }
     })
     console.log(data)
+    const res = await data.json();
+    swal({
+      title: "Category deleted succesfully",
+      icon: "success",
+      button: false,
+      timer: 3000
+    })
     fetchCategory();
   }
 

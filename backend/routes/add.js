@@ -38,7 +38,7 @@ router.post("/createcustomer", [
 
         //if user exist then send bad request
         if (customer) {
-            return res.status(400).json({ message: "Sorry an user with this email is already exist" })
+            return res.status(400).json({ message: "Sorry an Customer with this email is already exist" })
         }
 
         //create user and save into DB
@@ -55,7 +55,7 @@ router.post("/createcustomer", [
             email: email,
             phoneno: phoneno
         });
-        return res.status(200).json({ message: "Successfully signup" })
+        return res.status(200).json({ message: "Successfully Added" })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });
@@ -73,7 +73,7 @@ router.post("/createitem", [
 
         //if user exist then send bad request
         if (item) {
-            return res.status(400).json({ message: "Sorry an user with this email is already exist" })
+            return res.status(400).json({ message: "Sorry an Item with this name is already exist" })
         }
 
         //create user and save into DB
@@ -85,7 +85,7 @@ router.post("/createitem", [
             quantity: quantity,
             units: units
         });
-        return res.status(200).json({ message: "Successfully signup" })
+        return res.status(200).json({ message: "Successfully Added" })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });
@@ -114,5 +114,56 @@ router.get('/fetch_items',async (req,res) => {
        res.status(500).json({error:"Internal Server Error"}); 
     }
 });
+
+router.put('/updatecustomer/:customerId', [
+
+], async (req, res) => {
+    try {
+        const customerId = req.params.customerId;
+        const updateData = req.body;
+
+        const customer = await Customer.findById(customerId);
+
+        if (!customer) {
+            return res.status(400).json({ message: "Customer Not Found" });
+        }
+        customer.firstname = updateData.firstname;
+        customer.middlename = updateData.middlename;
+        customer.lastname = updateData.lastname;
+        customer.address = updateData.address;
+        customer.email = updateData.email;
+        customer.city = updateData.city;
+        customer.state = updateData.state;
+        customer.country = updateData.country;
+        customer.phoneno = updateData.phoneno;
+
+        await customer.save();
+
+        return res.status(200).json({ message: "Customer Update Successfully" })
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+//DELETE THE CUSTOMER
+router.delete('/deletecustomer/:customerId', async (req, res) => {
+    const customerId = req.params.customerId;
+    try {
+        const customer = await Customer.findById(customerId);
+        if (!customer) {
+            return res.status(404).json({ message: "Customer Not Found" });
+        }
+
+        await customer.deleteOne();
+
+        res.status(200).json({ message: 'Customer deleted successfully' });
+
+    } catch (error) {
+        console.error('Error', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+})
 
 module.exports = router

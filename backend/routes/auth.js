@@ -114,7 +114,7 @@ router.post("/login", [
             }
         }
 
-        return res.status(200).json({ message: "Successfully Loged In" ,data})
+        return res.status(200).json({ message: "Successfully Logged In" ,data})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });

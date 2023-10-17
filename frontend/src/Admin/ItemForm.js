@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import swal from 'sweetalert';
 
 const ItemForm = ({ setcategoryList}) => {
     
@@ -34,8 +35,26 @@ const ItemForm = ({ setcategoryList}) => {
         });
     }
     const handleAdditem = async (e) => {
-        const url = "http://localhost:4000/add/createitem";
-        e.preventDefault();   
+        e.preventDefault();  
+        if (
+            formData.itemname === "" ||
+            formData.itemcategory === "" ||
+            formData.costprice === "" ||
+            formData.sellingprice === "" ||
+            formData.quantity === "" ||
+            formData.units === ""
+
+        ) {
+            swal({
+                title: "Please fill in all required fields",
+                icon: "error",
+                button: false,
+                timer: 3000,
+            });
+            return;
+        }
+
+        const url = "http://localhost:4000/add/createitem"; 
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -47,7 +66,12 @@ const ItemForm = ({ setcategoryList}) => {
 
             if (response.status === 200) {
                 // Item added successfully
-                alert('Item added successfully');
+                swal({
+                    title: "Item added successfully",
+                    icon: "success",
+                    button: false,
+                    timer: 3000
+                })
                 // Clear the form
                 setFormData({
                     itemname: "",
@@ -59,11 +83,21 @@ const ItemForm = ({ setcategoryList}) => {
                 });
             } else {
                 // Handle errors if necessary
-                alert("Error Adding Item");
-                console.error('Error adding Item');
+                swal({
+                    title: "Error Adding Item",
+                    icon: "error",
+                    button: false,
+                    timer: 3000
+                })
             }
         } catch (error) {
             console.error('Error adding Item:', error);
+            swal({
+                title: `Internal Server Error ${error}`,
+                icon: "error",
+                button: false,
+                timer: 3000
+            })
         }
     };
 
@@ -79,12 +113,14 @@ const ItemForm = ({ setcategoryList}) => {
                             <label htmlFor="name_items">Name: </label><br />
                             <input type="text" name="name_item" id="name_item" placeholder=' Enter Item Name '
                             value={formData.itemname}
+                            required
                             onChange={(e) => setFormData({ ...formData, itemname: e.target.value })} />
                         </div>
                         <div className="item_input_row">
                             <label for="category">Category:</label><br />
                             <select id="item_category" 
                             value={formData.category}
+                            required
                             onChange={(e) => setFormData({ ...formData, itemcategory: e.target.value })}
                             >
                                 <option value="Powder" selected>Powder</option>
@@ -96,6 +132,7 @@ const ItemForm = ({ setcategoryList}) => {
                             <label htmlFor="item_cp" >Cost Price:</label><br />
                             <input type="number" name="item_cp" id="item_cp" placeholder=' Enter Price ' 
                             value={formData.costprice}
+                            required
                             onChange={(e) => setFormData({ ...formData, costprice: e.target.value })}
                             />
                         </div>
@@ -103,6 +140,7 @@ const ItemForm = ({ setcategoryList}) => {
                             <label htmlFor="item_sp">Selling Price:</label><br />
                             <input type="number" name="item_sp" id="item_sp" placeholder=' Enter Selling Price ' 
                             value={formData.sellingprice}
+                            required
                             onChange={(e) => setFormData({ ...formData, sellingprice: e.target.value })}
                             />
                         </div>
@@ -112,6 +150,7 @@ const ItemForm = ({ setcategoryList}) => {
                                 <button className="plus_item">+</button>
                                 <input type="number" name="item_qty" id="item_qty" placeholder=' Enter Quantity' 
                                 value={formData.quantity}
+                                required
                                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                                 />
                                 <button className="minus_item">-</button>
@@ -120,6 +159,7 @@ const ItemForm = ({ setcategoryList}) => {
                                 <label htmlFor="item_unit">Units:</label><br />
                                 <select id="item_units"
                                 value={formData.units}
+                                required
                                 onChange={(e) => setFormData({ ...formData, units: e.target.value })}
                                 >
                                     <option value="Kg" selected>Kilograms</option>

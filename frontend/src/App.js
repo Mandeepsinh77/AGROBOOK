@@ -19,6 +19,9 @@ import CustomerList from "./Pages/CustomerList";
 import ForgotPsw from './Admin/ForgotPsw';
 import ResetPsw from './Admin/ResetPsw';
 import ItemList from './Pages/ItemList';
+import Footer from './component/Footer';
+import ScrollToTop from './component/ScrollToTop';
+import Sell from './Pages/Sell'
 const AppState = createContext();
 
 
@@ -53,7 +56,9 @@ function App() {
           <Route path="/forgot" element={<ForgotPsw />} />
           <Route path="/forgotpassword/:id/:token" element={<ResetPsw />} />
           <Route path="/itemList" element={<ItemList />} />
-
+          <Route path='/footer' element={<Footer/>}/>
+          <Route path='/scrollToTop' element={<ScrollToTop/>}/>
+          <Route path="/sell" element={<Sell />} />
         </Routes>
       </div>
     </AppState.Provider>

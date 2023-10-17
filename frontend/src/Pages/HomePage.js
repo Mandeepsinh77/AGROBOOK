@@ -4,6 +4,8 @@ import CarouselComponent from '../component/CarouselComp';
 import AboutUs from '../component/About';
 import Service from '../component/Service';
 import Contact from '../component/Contact';
+import Footer from '../component/Footer';
+import ScrollToTop from '../component/ScrollToTop';
 import { useContext } from 'react';
 import { AppState } from '../App';
 
@@ -57,7 +59,8 @@ const HomePage = () => {
       </div>
       <Service />
       <Contact />
-
+      <Footer/>
+      <ScrollToTop/>
     </>
 
   )
