@@ -1,6 +1,10 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose;
 const UserSchema = new Schema({
+    shopname:{
+        type: String,
+        require:true
+    },
     name: {
         type: String,
         require: true

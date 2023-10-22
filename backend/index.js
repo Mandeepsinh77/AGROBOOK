@@ -4,7 +4,10 @@ connectToMongo();
 const auth = require("./routes/auth.js");
 const category_crud = require("./routes/category_crud.js");
 const add = require("./routes/add.js")
+const dlt=require("./routes/delete.js")
+const save=require("./routes/save.js")
 const cors = require("cors")
+const Payment = require("./routes/payment.js");
 
 
 const app = express();
@@ -20,6 +23,9 @@ app.use(express.json());
 app.use("/auth", auth);
 app.use("/category_crud", category_crud);
 app.use("/add", add);
+app.use("/save", save);
+app.use("/delete", dlt);
+app.use("/payment", Payment);
 
 app.listen(port, (err) => {
     console.log(`Server Running on port ${port}`)

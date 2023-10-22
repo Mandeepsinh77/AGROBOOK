@@ -22,6 +22,8 @@ import ItemList from './Pages/ItemList';
 import Footer from './component/Footer';
 import ScrollToTop from './component/ScrollToTop';
 import Sell from './Pages/Sell'
+import Analysis from './Pages/Analysis';
+import Payment from "./Pages/Payment.js";
 const AppState = createContext();
 
 
@@ -59,6 +61,8 @@ function App() {
           <Route path='/footer' element={<Footer/>}/>
           <Route path='/scrollToTop' element={<ScrollToTop/>}/>
           <Route path="/sell" element={<Sell />} />
+          <Route path="/analysis" element={<Analysis/>}/>
+          <Route path="/payment" element={<Payment />} />
         </Routes>
       </div>
     </AppState.Provider>

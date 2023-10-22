@@ -6,7 +6,7 @@ function CategoryList() {
   const [newCategory, setNewCategory] = useState("");
   useEffect(() => {
     fetchCategory();
-    console.log(categories);
+    console.log(categories[0]);
   }, []); // Empty dependency array means this effect runs once on component mount
 
   const handleAddCategory = (e) => {
@@ -106,7 +106,7 @@ function CategoryList() {
           placeholder="Add a new category"
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
-          className="border rounded-md border-gray-300 px-2 py-1 mr-2 "
+          className="border-4 rounded-md border-[#1F3F49] px-2 py-1 mr-2 w-[40%]"
         />
         <button
           onClick={handleAddCategory}
@@ -116,23 +116,23 @@ function CategoryList() {
         </button>
       </div>
       <div className="mt-8 flex justify-center items-center">
-        <table className="w-1/2 border-collapse border border-gray-300">
+        <table className="w-1/2 border-collapse">
           <thead className="text-center">
             <tr>
-              <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">
+              <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
                 <div className="">ID</div>
               </th>
-              <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">
+              <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                 <div className="">Name</div>
               </th>
+              <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase"></th>
             </tr>
           </thead>
           <tbody>
             {categories? categories && categories.map((category, index) => (
               // {console.log(category.category_name)}
-              <tr className="text-center category_row" key={index}>
-                <td className="border border-gray-300 px-4 py-2">
-                  {index + 1}
+              <tr className="text-center capitalize category_row hover:border-2 hover:border-black hover:rounded-md" style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
+                <td className='border border-gray-300 px-2 py-2 ml-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {category.category_name}

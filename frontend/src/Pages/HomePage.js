@@ -8,14 +8,16 @@ import Footer from '../component/Footer';
 import ScrollToTop from '../component/ScrollToTop';
 import { useContext } from 'react';
 import { AppState } from '../App';
+import {AiFillHome,AiFillInfoCircle} from 'react-icons/ai';
+import {MdMiscellaneousServices,MdContactPage} from 'react-icons/md';
 
 const HomePage = () => {
   const useAppState = useContext(AppState);
   const links = [
-    { name: "Home", link: "/" },
-    { name: "About", link: "/about" },
-    { name: "Services", link: "/services" },
-    { name: "Contact Us", link: "/contact" },
+    { name: "Home", link: "/",icon:<AiFillHome/> },
+    { name: "About", link: "/about",icon:<AiFillInfoCircle/> },
+    { name: "Services", link: "/services",icon:<MdMiscellaneousServices/> },
+    { name: "Contact Us", link: "/contact",icon:<MdContactPage/> },
     // { name: "Dashboard", link: "/dashboard" },
   ];
 

@@ -80,7 +80,7 @@ div.customer_form{
   text-transform: capitalize;
 }
 .form-row input:focus::placeholder {
-  color: rgb(244, 244, 244);
+  color: black;
 }
 .form-row input:hover::placeholder {
   color: rgb(244, 244, 244);
@@ -90,7 +90,7 @@ div.customer_form{
   color: white;
 }
 .form-row input:focus{
-  color: white;
+  /* color: white; */
   font-weight: bold;
 }
 #address{
@@ -182,7 +182,8 @@ div.customer_form{
   padding: 1.1rem;
 }
 #item_qty:focus::placeholder {
-  color: rgb(244, 244, 244);
+  /* background-color: #6AB187; */
+  color: black;
 }
 #item_qty:hover::placeholder {
   color: rgb(244, 244, 244);
@@ -200,7 +201,7 @@ div.customer_form{
   text-align: left;
 }
 .item_input_row input:focus::placeholder {
-  color: rgb(244, 244, 244);
+  color: black;
 }
 .item_input_row input:hover::placeholder {
   color: rgb(244, 244, 244);
@@ -210,7 +211,7 @@ div.customer_form{
   color: white;
 }
 .item_input_row input:focus{
-  color: white;
+  /* color: white; */
   font-weight:bold;
 }
 #item_category{

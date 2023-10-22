@@ -7,7 +7,7 @@ const connectToMongo = () => {
         // useCreateIndex:true,
         useUnifiedTopology:true
         // useFindAndModify:false 
-    }).then(() => { console.log("Connct to Mongo Successfully") })
+    }).then(() => { console.log("Connection Established") })
         .catch((err) => { console.log(err) })
 }
 module.exports = connectToMongo;

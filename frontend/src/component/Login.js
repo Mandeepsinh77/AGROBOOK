@@ -17,6 +17,7 @@ const Login = () => {
 
   
   const { setData } = useData();
+  const {setshopname} = useData();
 
   async function validateData() {
     const url = "http://localhost:4000/auth/login";
@@ -28,11 +29,15 @@ const Login = () => {
       body: JSON.stringify(formData)
     })
     const data = await res.json();
+    const username = data.data.user.username;
+    const shopname = data.data.user.shopname;
+    console.log(username)
+    console.log(shopname)
+    setData(username);
+    setshopname(shopname);
 
     if (res.ok) {
       useAppState.setLogin(true);
-      const username = data.data.user.username;
-      setData(username);
       swal({
         title: "Successfully Loged In",
         icon: "success",

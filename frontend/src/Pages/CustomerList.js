@@ -15,9 +15,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import swal from 'sweetalert';
 import { useNavigate } from 'react-router-dom';
 import {FcViewDetails} from 'react-icons/fc';
-import {AiFillDelete} from 'react-icons/ai';
+import {AiFillDelete,AiFillEdit} from 'react-icons/ai';
 
-function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setFormData }){
+function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setFormData ,setPayment }){
     const[customers,setCustomers] = useState([]);
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
@@ -25,48 +25,53 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
     const [selected, setSelected] = useState(null);
     const [query, setQuery] = useState("");
 
-    const Transition = React.forwardRef(function Transition(props, ref) {
-        return <Slide direction="up" ref={ref} {...props} />;
-    });
-
     const handleDeltecustomer = async (customerId) => {
-        try {
-            const response = await fetch(`http://localhost:4000/add/deletecustomer/${customerId}`, {
-                method: 'DELETE',
-            });
-    
-            if (response.ok) {
-                // Successful deletion, remove the customer from the state
-                setCustomers(customers.filter((customer) => customer._id !== customerId));
-                swal({
-                    title: 'Success!',
-                    text: 'Customer deleted successfully',
-                    icon: 'success',
-                    timer: 3000,
+        const confirmResult = await swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this customer!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        });
+
+        if (confirmResult) {
+            try {
+                const response = await fetch(`http://localhost:4000/add/deletecustomer/${customerId}`, {
+                    method: 'DELETE',
                 });
-            } else {
-                // Handle non-successful responses
-                const errorData = await response.json();
-                console.log(errorData.message);
+
+                if (response.ok) {
+                    // Successful deletion, remove the customer from the state
+                    setCustomers(customers.filter((customer) => customer._id !== customerId));
+                    swal({
+                        title: 'Success!',
+                        text: 'Customer deleted successfully',
+                        icon: 'success',
+                        timer: 3000,
+                    });
+                } else {
+                    // Handle non-successful responses
+                    const errorData = await response.json();
+                    console.log(errorData.message);
+                    swal({
+                        title: 'Error!',
+                        text: errorData.message,
+                        icon: 'error',
+                        timer: 3000,
+                    });
+                }
+            } catch (error) {
+                // Handle network or client-side errors
+                console.log('Error:', error);
                 swal({
                     title: 'Error!',
-                    text: errorData.message,
+                    text: 'An error occurred while deleting the customer',
                     icon: 'error',
                     timer: 3000,
                 });
             }
-        } catch (error) {
-            // Handle network or client-side errors
-            console.log('Error:', error);
-            swal({
-                title: 'Error!',
-                text: 'An error occurred while deleting the customer',
-                icon: 'error',
-                timer: 3000,
-            });
         }
     };
-
     const handleEditCustomer = async () => {
         try {
             const response = await fetch(`http://localhost:4000/add/updatecustomer/${selected._id}`, {
@@ -109,7 +114,8 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
     const handleClose2 = () => {
         setOpen2(false);
     };
-    const handleClickOpen2 = () => {
+    const handleClickOpen2 = (customer) => {
+        setSelected(customer);
         setEditcustomer({
             firstname: selected.firstname,
             middlename: selected.middlename,
@@ -143,6 +149,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         setcategoryList(false)
         setAddCustomer(false)
         setcustomerList(false)
+        setPayment(false)
         setSell(true)
     }
 
@@ -179,42 +186,18 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
             <input
                 type="text"
                 placeholder="Search Customer"
-                className="border rounded-md border-gray-300 px-2 py-1 mr-2 w-[60%]"
+                className="border-4 rounded-md border-[#1F3F49] px-2 py-1 mr-2 w-[60%] search_icon
+                "
                 onChange={e=>setQuery(e.target.value)}
             />
             {/* <button className="border rounded-md bg-green-500 text-white px-2 py-1">
                 Search
             </button> */}
         </div>
-        <div className='mt-16 flex justify-center items-center'>
-
+        <div className='mt-8 flex justify-center items-center'>
             <table className="w-1/2 border-collapse">
                 <thead className="text-center">
                     <tr>
-                        {/* <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">CID</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 w-auto py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">First Name</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">Last Name</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">Phone No</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">Details</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">Sale</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">Payment History</div>
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-black-500 uppercase">
-                            <div className="">Status</div>
-                        </th> */}
                         <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
                                 <div className="">CID </div>
                             </th>
@@ -229,6 +212,9 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Details</div>
+                            </th>
+                            <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                <div className="">Edit</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Sale</div>
@@ -246,19 +232,22 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                 </thead>
                 <tbody>
                     {customers.filter((customer)=>customer.firstname.toLowerCase().includes(query) || customer.lastname.toLowerCase().includes(query)||customer.phoneno.includes(query)).map((customer,index)=> (
-                        <tr className='text-center hover:border-2 hover:border-black hover:rounded-md'style={{backgroundColor:index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={customer._id} >
-                            <td className='border-2 border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
-                            <td className='border-2 border-gray-300 px-4 py-2'>{customer.firstname}</td>
-                            <td className='border-2 border-gray-300 px-4 py-2'>{customer.lastname}</td>
-                            <td className='border-2 border-gray-300 px-4 py-2'>{customer.phoneno}</td>
+                        <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={customer._id} >
+                            <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
+                            <td className='border border-gray-300 px-4 py-2'>{customer.firstname}</td>
+                            <td className='border border-gray-300 px-4 py-2'>{customer.lastname}</td>
+                            <td className='border border-gray-300 px-4 py-2'>{customer.phoneno}</td>
                             <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
                                     <Button variant="outlined" onClick={() => handleClickOpen1(customer)}><FcViewDetails/> Details</Button>
-                                </td>
-                                <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                            </td>
+                            <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                                    <Button variant="outlined" onClick={() => handleClickOpen2(customer)}><AiFillEdit/> Edit</Button>
+                            </td>
+                            <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
                                     <Button variant="outlined" onClick={() => { handleSetSell(index, customer) }}><FcViewDetails /> Sale</Button>
-                                </td>
-                            <td className='border-2 border-gray-300 px-4 py-2 customer_link text-blue-500 underline'><a href="#">Payments</a></td>
-                            <td className='border-2 border-gray-300 px-4 py-2 customer_link text-blue-500 underline'><a href="#">Status</a></td>
+                            </td>
+                            <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500 underline'><a href="#">Payments</a></td>
+                            <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500 underline'><a href="#">Status</a></td>
                             <td className='border border-gray-200 px-4 py-2 customer_link'>
                                     <Button variant="outlined" onClick={()=>handleDeltecustomer(customer._id)} style={{color:"red",border:"1px solid red"}}><AiFillDelete/> Delete</Button>
                                 </td>
@@ -271,13 +260,11 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         <Dialog
                 fullScreen
                 open={open1}
-                onClose={handleClose1}
-                TransitionComponent={Transition}
-            >
+                onClose={handleClose1}>
                 {
                  selected && (
                         <>
-                            <AppBar sx={{ position: 'relative', backgroundColor: '#6AB187' }}>
+                            <AppBar sx={{ position: 'relative', backgroundColor: '#6AB187', width:'100%' }}>
                                 <Toolbar>
                                     <IconButton
                                         edge="start"
@@ -285,15 +272,11 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                                         onClick={handleClose1}
                                         aria-label="close"
                                     >
-                                        <CloseIcon />
+                                     <CloseIcon />
                                     </IconButton>
                                     <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                                         Customer's Details
                                     </Typography>
-                                    <Button autoFocus color="inherit" onClick={handleClickOpen2}>
-                                        Edit Customer
-                                    </Button>
-
                                 </Toolbar>
                             </AppBar>
                             <Typography>

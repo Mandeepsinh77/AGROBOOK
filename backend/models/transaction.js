@@ -1,40 +1,41 @@
-const mongoose = require("mongoose")
-const trasactionScehma = new mongoose.Schema(
-    {
-        shopkeeperid:{
-            type:String,
-            require:true
+// models/Transaction.js
+
+const mongoose = require('mongoose');
+
+const transactionSchema = new mongoose.Schema({
+    customerId: {
+        type: String,
+        require: true,
+    },
+    customerName: {
+        type: String,
+        require: true,
+    },
+    customerPhone: {
+        type: String,
+        require: true,
+    },
+    date: {
+        type: Date,
+        require: true,
+    },
+    items: [
+        {
+            itemNo: String,
+            itemname: String,
+            costPrice: String,
+            sellingPrice: String,
+            unit: String,
+            quantity: Number,
+            totalPriceOfItem: String
         },
-        customerid: {
-            type: String,
-            require: true,
-            unique: true
-        },
-        customername: {
-            type: String,
-            require: true
-        },
-        customerphoneno: {
-            type: String,
-            require: true,
-            unique: true
-        },
-        products: [
-            {
-                itemId: String, // Unique identifier for the item
-                itemName: String, // Name of the item
-                itemCategory: String, // Category of the item
-                costPrice: Number, // Cost price of the item
-                sellingPrice: Number, // Selling price of the item
-                qty: Number, // Quantity of the item
-                unit: String, // Unit of measurement for the item (e.g., 'units', 'kg', 'g', etc.)
-                totalPriceOfItem: Number, // Total price for the quantity of this item
-            },
-        ],
-        totalTransactionAmount: {
-            type: number,
-            require: true,
-        }
-    })
-const transaction = mongoose.model('transaction', trasactionScehma);
-module.exports = transaction
+    ],
+    totalPayment: {
+        type: Number,
+        require: true
+    }
+});
+
+const Transaction = mongoose.model('Transaction', transactionSchema);
+
+module.exports = Transaction;

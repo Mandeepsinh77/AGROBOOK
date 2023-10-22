@@ -23,13 +23,13 @@ router.post("/createuser", [
     //for validation using express-validator packge
     body('name', "Enter a valid name").isLength({ min: 3 }),
     body('email', "Enter a valid Email").isEmail(),
-    body("password", "Password length must be atlist six character").isLength({ min: 6 })
-
+    body("password", "Password length must be atlist six character").isLength({ min: 6 }),
+    body('shopname', "Enter a valid shop name").isLength({ min: 3 })
 ], async (req, res) => {
     // console.log(req.body);
 
     //destructure req.body
-    const { name, email, password } = req.body;
+    const { name, email, password, shopname } = req.body;
 
     //if userDetail is not follow above validation then there is an error
     const error = validationResult(req)
@@ -54,9 +54,10 @@ router.post("/createuser", [
         user = await User.create({
             name: name,
             password: password,
-            email: email
+            email: email,
+            shopname:shopname
         })
-        return res.status(200).json({ message: "Successfully signup" })
+        return res.status(200).json({ message: "Successfully signup" , user})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });
@@ -110,7 +111,8 @@ router.post("/login", [
             user: {
                 id: user.id,
                 username:user.name,
-                psw:user.password
+                psw:user.password,
+                shopname:user.shopname
             }
         }
 

@@ -1,10 +1,11 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 
-const ItemForm = ({ setcategoryList}) => {
-    
+const ItemForm = () => {
+    const [categories, setCategories] = useState([]);
+    // const [count,setCount] = useState(0);
     const [formData, setFormData] = useState(
         {
             itemname: "",
@@ -23,7 +24,27 @@ const ItemForm = ({ setcategoryList}) => {
             navigateTo("/");
         }
     }
-    
+
+    async function fetchCategory() {
+        fetch("http://localhost:4000/category_crud/categories") // Use the correct URL for your backend endpoint
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // console.log(data);
+            setCategories(data);
+          })
+          .catch((error) => {
+            console.error("Error fetching categories:", error);
+          });
+      }
+      useEffect(() => {
+        fetchCategory();
+        console.log(categories);
+      }, []); 
     const handleClear = ()=>{
         setFormData({
             itemname: "",
@@ -123,9 +144,8 @@ const ItemForm = ({ setcategoryList}) => {
                             required
                             onChange={(e) => setFormData({ ...formData, itemcategory: e.target.value })}
                             >
-                                <option value="Powder" selected>Powder</option>
-                                <option value="Liquid">Liquid</option>
-                                <option value="Tools">Tools</option>
+                             {categories.map((category) => (
+                             <option key={category._id} value={category.category_name}>{category.category_name} </option>))}
                             </select>
                         </div>
                         <div className="item_input_row">
@@ -147,13 +167,13 @@ const ItemForm = ({ setcategoryList}) => {
                         <div className="qty_units">
                             <div className="qty_units_row">
                                 <label htmlFor="item_qty">Quantity:</label><br />
-                                <button className="plus_item">+</button>
+                                <button className="plus_item">-</button>
                                 <input type="number" name="item_qty" id="item_qty" placeholder=' Enter Quantity' 
                                 value={formData.quantity}
                                 required
                                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                                 />
-                                <button className="minus_item">-</button>
+                                <button className="minus_item">+</button>
                             </div>
                             <div className="qty_units_row">
                                 <label htmlFor="item_unit">Units:</label><br />
@@ -164,7 +184,7 @@ const ItemForm = ({ setcategoryList}) => {
                                 >
                                     <option value="Kg" selected>Kilograms</option>
                                     <option value="Lit">Litres</option>
-                                    <option value="per unit">Per Unit</option>
+                                    <option value="per unit">Unit/s</option>
                                 </select>
                             </div>
                         </div>

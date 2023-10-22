@@ -11,6 +11,7 @@ const SignupPage = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(
     {
+      shopname: "",
       name: "",
       email: "",
       password: "",
@@ -31,6 +32,8 @@ const SignupPage = () => {
     });
 
     const data = await res.json();
+    const shopname = data['user'].shopname;
+    console.log(shopname)
 
     // console.log(data["message"])
     // console.log(res.ok)
@@ -103,6 +106,16 @@ const SignupPage = () => {
       <div className="w-full opacity-80 max-w-lg p-8 bg-white rounded-lg shadow-lg z-10">
         <h2 className="text-2xl text-center font-semibold mb-6"><span className='text-green-600 no-underline hover:underline hover:cursor-pointer'>Grow With Us,</span> Sign Up Today!</h2>
         <form onSubmit={handleSubmit}>
+        <input
+            type="text"
+            id="shopname"
+            name="shopname"
+            value={formData.shopname}
+            onChange={(e) => setFormData({ ...formData, shopname: e.target.value })}
+            className="block w-full px-4 py-3 mb-4 border rounded-lg placeholder-gray-600 bg-slate-200 text-gray-800"
+            placeholder="Enter Your Shop Name"
+            required
+          />
           <input
             type="text"
             id="name"
