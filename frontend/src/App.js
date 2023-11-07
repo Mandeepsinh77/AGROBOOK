@@ -29,11 +29,11 @@ const AppState = createContext();
 
 function App() {
   const [login, setLogin] = useState(false);
-
+  const [UserId, setUserId] = useState("");
   return (
 
     // <BrowserRouter>
-    <AppState.Provider value={{ login, setLogin }}>
+    <AppState.Provider value={{ login, setLogin, UserId, setUserId }}>
       <div className='app'>
         <Routes>
           {

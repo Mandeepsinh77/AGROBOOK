@@ -31,11 +31,14 @@ const Login = () => {
     const data = await res.json();
     const username = data.data.user.username;
     const shopname = data.data.user.shopname;
+    const userId = data.data.user.id;
+    useAppState.setUserId(userId)
+
     console.log(username)
     console.log(shopname)
     setData(username);
     setshopname(shopname);
-
+   
     if (res.ok) {
       useAppState.setLogin(true);
       swal({

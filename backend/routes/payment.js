@@ -7,6 +7,22 @@ const UpiDetails = require("../models/UpiDetails.js");
 const CashDetails = require("../models/cashdetails.js")
 
 
+router.get('/confirm_cheque_payment/:customerphoneno', async (req, res) => {
+    try {
+        const customerphoneno = req.params.customerphoneno;
+        console.log(customerphoneno);
+        const paymentDetails = await Payment.findOne({ customerphoneno: customerphoneno });
+        if (!paymentDetails) {
+            res.status(404).json({ message: "User Not Found" });
+        } else {
+            res.json(paymentDetails);
+            console.log(paymentDetails);
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
 // Create a new payment
 router.post('/confirm_cheque_payment', async (req, res) => {
     try {
@@ -180,6 +196,38 @@ router.post('/fetch_remaining_amount', async (req, res) => {
         console.log("backend catch")
         console.error('Error fetching previous remaining amount:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/fetch_remaining_amount/:customerphoneno', async (req, res) => {
+    const customerphoneno = req.params.customerphoneno;
+    console.log('Received request for customer phoneno:', customerphoneno);
+    try {
+        const payment = await Payment.find({ customerphoneno: customerphoneno }).sort({ _id: -1 }).limit(1);
+      console.log(payment);
+      if (!payment) {
+        return res.status(404).json({ error: 'Payment record not found' });
+      }
+  
+      // Adjust this based on your actual data structure.
+      const remainingAmount = payment[0].remaining_amount;
+   
+      res.json({remainingAmount} );
+    } catch (error) {
+      console.error('Error fetching updated remaining amount:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+  
+  // Add this route to your Express.js server
+// Add this route to your Express.js server
+router.get('/fetch_customer_data', async (req, res) => {
+    try {
+        const payments = await Payment.find({});
+        res.json(payments);
+    } catch (error) {
+        console.error('Error fetching all payment data:', error);
+        res.status(500).json({ error: 'An error occurred' });
     }
 });
 

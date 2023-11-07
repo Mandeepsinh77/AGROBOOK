@@ -77,7 +77,6 @@ div.customer_form{
   width: 12rem;
   border: 2px solid rgb(195, 192, 192);
   outline: none;
-  text-transform: capitalize;
 }
 .form-row input:focus::placeholder {
   color: black;

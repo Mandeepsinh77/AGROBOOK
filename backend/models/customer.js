@@ -47,6 +47,14 @@ const customerSchema = new mongoose.Schema({
         type: String,
         require: true,
         unique: true
+    },
+    visited:{
+        type:Boolean,
+        default:false,
+    },
+    status:{
+        type:String,
+        default:'status'
     }
 });
 

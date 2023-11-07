@@ -14,8 +14,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import swal from 'sweetalert';
 import { useNavigate } from 'react-router-dom';
-import {FcViewDetails} from 'react-icons/fc';
+import {FcViewDetails,FcSalesPerformance} from 'react-icons/fc';
 import {AiFillDelete,AiFillEdit} from 'react-icons/ai';
+import { useContext } from 'react';
+import { AppState } from "../App.js";
 
 function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setFormData ,setPayment }){
     const[customers,setCustomers] = useState([]);
@@ -24,6 +26,12 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
     const [editcustomer, setEditcustomer] = useState({});
     const [selected, setSelected] = useState(null);
     const [query, setQuery] = useState("");
+    const [dataremain, setdataremain] = useState(0);
+    const [customerStatus, setCustomerStatus] = useState({});
+
+    const useAppState = useContext(AppState);
+    const userID = useAppState.UserId;
+    console.log(userID);
 
     const handleDeltecustomer = async (customerId) => {
         const confirmResult = await swal({
@@ -153,9 +161,48 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         setSell(true)
     }
 
+    const handleClickOpen3 = async (customer) => {
+        try {
+            console.log(customer);
+            const res = await fetch(`http://localhost:4000/payment/fetch_remaining_amount/${customer.phoneno}`, {
+                method: 'GET',
+            });
+            if (res.status === 200) { 
+                const data = await res.json();
+                console.log(data)
+                // const payment = data.payment; 
+                // console.log(payment[0].remaining_amount);
+                const remaining_amount = data.remainingAmount; 
+                console.log(remaining_amount)
+                setCustomerStatus((prevStatus) => ({ 
+                    ...prevStatus, 
+                    [customer._id]: remaining_amount > 0 ? 'Pending' : 'Completed',    
+                }));
+                setdataremain(remaining_amount);
+            } 
+            else {
+                console.log('Error fetching payment details.');
+            }
+        }   
+        catch (error) {
+            console.log(error); 
+        }
+    }
+    console.log(dataremain);
+
     async function fetchCustomers(){
         try{
-        fetch('http://localhost:4000/add/fetch_customers')
+            const requestData = {
+                userID: userID,
+            };
+
+        fetch('http://localhost:4000/add/fetch_customers',{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+        })
         .then(response=>{
             if(!response.ok){
                 throw new Error('Network response was not ok')
@@ -164,9 +211,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         })
         .then(data => {
             setCustomers(data)
-            console.log('Fetched Data:', data);
-            console.log(data[0].firstname)
-        })
+        }) 
         .catch(error=>{
             console.error('Error fetching Customers: ',error);
 
@@ -178,10 +223,16 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
 
     useEffect(()=>{
         fetchCustomers();
+        const initialCustomerStatus = customers.reduce((status, customer) => {
+            status[customer._id] = 'Status';
+            return status;
+        }, {});  
+        setCustomerStatus(initialCustomerStatus);
     },[]);
 
     return(
         <div className="container mx-auto">
+        <h1 className='mt-8 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Customer's Details</h1>
         <div className="mt-4  flex justify-center items-center ">
             <input
                 type="text"
@@ -194,7 +245,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                 Search
             </button> */}
         </div>
-        <div className='mt-8 flex justify-center items-center'>
+        <div className='ml-8 mt-8 flex justify-center items-center'>
             <table className="w-1/2 border-collapse">
                 <thead className="text-center">
                     <tr>
@@ -219,11 +270,11 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Sale</div>
                             </th>
-                            <th className=" border-gray-700 px-4 py-2 bg-gray-700 text-white  text-center text-xs font-medium  uppercase">
-                                <div className="">Payment History</div>
-                            </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Status</div>
+                            </th>
+                            <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                <div className="">Check</div>
                             </th>
                             <th className=" rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Delete</div>
@@ -246,8 +297,16 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                             <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
                                     <Button variant="outlined" onClick={() => { handleSetSell(index, customer) }}><FcViewDetails /> Sale</Button>
                             </td>
-                            <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500 underline'><a href="#">Payments</a></td>
-                            <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500 underline'><a href="#">Status</a></td>
+                            <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500'>
+                                    <a href="/status">
+                                        <span style={{ color: customerStatus[customer._id] === 'Pending' ? 'red' : customerStatus[customer._id] === 'Completed' ? 'green' : 'blue' }}>
+                                            {customerStatus[customer._id]}
+                                        </span>
+                                    </a>
+                            </td>
+                            <td className='border border-gray-200 px-4 py-2 customer_link'>
+                                    <Button variant="outlined" onClick={() => handleClickOpen3(customer)} style={{ color: "black", border: "2px solid black", fontWeight: "bold" }}> Check</Button>
+                                </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link'>
                                     <Button variant="outlined" onClick={()=>handleDeltecustomer(customer._id)} style={{color:"red",border:"1px solid red"}}><AiFillDelete/> Delete</Button>
                                 </td>
@@ -279,7 +338,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                                     </Typography>
                                 </Toolbar>
                             </AppBar>
-                            <Typography>
+                            <Typography> 
                                 <div className="min-h-screen bg-gray-100">
                                     <div className="w-full sm:w-11/12 md:w-9/12 lg:w-7/12 xl:w-1/2 mx-auto p-4">
                                         <div className="bg-white rounded-md p-2 shadow-lg">
@@ -346,8 +405,8 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                 <DialogActions>
                     <Button style={{ border: "1px solid #6AB187", color: "#6AB187" }} onClick={handleClose2}>Cancel</Button>
                     <Button style={{ backgroundColor: "#6AB187", color: "white" }} onClick={handleEditCustomer}>Edit</Button>
-                </DialogActions>
-            </Dialog>
+                </DialogActions> 
+            </Dialog>  
     </div>
     )
 }

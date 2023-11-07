@@ -12,7 +12,8 @@ import ItemList from "./ItemList.js";
 import Sell from "./Sell.js";
 import Analysis from "./Analysis.js";
 import Payment from './Payment.js';
-import { set } from "mongoose";
+import Transaction from "./Transaction.js";
+// import { set } from "mongoose";
 // import { Link } from 'react-router-dom'
 export default function Dashboard() {
   const links = [
@@ -43,17 +44,20 @@ export default function Dashboard() {
   const [sell, setSell] = useState(false);
   const [analysis, setAnalysis] = useState(false);
   const [payment, setPayment] = useState(false);
+  const [transaction,setTransaction] = useState(false);
 
   return (
     <>
       <div className='md:h-20 h-12'>
-                <Navbar links={links} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} />
+                <Navbar links={links} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setAnalysis={setAnalysis} setTransaction={setTransaction}/>
      </div>
       <div className="flex flex-row mb-2 ">
-        <div className="md:w-1/6 w-2/4 bg-gray-200 border-2 p-4 my_side_bar">
-          <table className="place-items-center w-full text-[#1F3F49] capitalize md:text-xl font-medium tracking-wide">
+        <div className="md:w-1/6 w-2/4 bg-gray-700 my_side_bar mt-1">
+          <table className="place-items-center w-full text-white capitalize md:text-xl font-medium tracking-wide">
             <tr
-              className={`border-b-2 mt-2 hover:bg-gray-300 hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer `}
+              className={` mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+                analysis ? "bg-white text-[#1F3F49] rounded-l-full" : ""
+              }`}
             >
               <img
                 width="30"
@@ -62,14 +66,48 @@ export default function Dashboard() {
                 alt="control-panel--v2"
                 className="mr-3"
               />
+              <Link
+                to="/"
+                onClick={() => {
+                  setAddItem(false);
+                  setContact(false);
+                  setAddCustomer(false);
+                  setcategoryList(false);
+                  setitemList(false);
+                  setSell(false);
+                  setPayment(false);
+                  setcustomerList(false);
+                  setTransaction(false);
+                  setAnalysis(true);
+                }}
+              >
               DashBoard
+              </Link>
             </tr>
-            <tr className="mt-2 border-b-2  hover:bg-gray-300 hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer">
-              History
+            <tr className={` mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+                transaction ? "bg-white text-[#1F3F49] rounded-l-full" : ""
+              }`}>
+            <Link
+                to="/"
+                onClick={() => {
+                  setAddItem(false);
+                  setContact(false);
+                  setAddCustomer(false);
+                  setcategoryList(false);
+                  setitemList(false);
+                  setSell(false);
+                  setPayment(false);
+                  setcustomerList(false);
+                  setAnalysis(false);
+                  setTransaction(true);
+                }}
+              >
+              Transaction
+              </Link>
             </tr>
             <tr
-              className={`mt-2 border-b-2 hover:bg-gray-300 hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
-                customerList ? "bg-[#1F3F49] text-white" : ""
+              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+                customerList ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
               <Link
@@ -83,6 +121,7 @@ export default function Dashboard() {
                   setSell(false);
                   setAnalysis(false);
                   setPayment(false);
+                  setTransaction(false);
                   setcustomerList(true);
                 }}
               >
@@ -90,8 +129,8 @@ export default function Dashboard() {
               </Link>
             </tr>
             <tr
-              className={`mt-2 border-b-2 hover:bg-gray-300 hover:text-black border-slate-500 h-20  flex items-center justify-center cursor-pointer ${
-                itemList ? "bg-[#1F3F49] text-white" : ""
+              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+                itemList ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
               <Link
@@ -103,7 +142,8 @@ export default function Dashboard() {
                   setcategoryList(false);
                   setSell(false);
                   setAnalysis(false);
-                  setPayment(false)
+                  setPayment(false);
+                  setTransaction(false);
                   setcustomerList(false);
                   setitemList(true);
                 }}
@@ -112,8 +152,8 @@ export default function Dashboard() {
               </Link>
             </tr>
             <tr
-              className={`mt-2 border-b-2 hover:bg-gray-300 hover:text-black  border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
-                categoryList ? "bg-[#1F3F49] text-white" : ""
+              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+                categoryList ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
               <Link
@@ -127,13 +167,14 @@ export default function Dashboard() {
                   setcustomerList(false);
                   setAnalysis(false);
                   setPayment(false);
+                  setTransaction(false);
                   setcategoryList(true);
                 }}
               >
                 categoryList
               </Link>
             </tr>
-            <tr className="mt-2 border-b-2 hover:bg-gray-300 hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer">
+            <tr className="mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center cursor-pointer">
               Invoice
             </tr>
 
@@ -141,7 +182,7 @@ export default function Dashboard() {
           </table>
         </div>
         <div className='md:w-3/4 w-2/4 ml-72'>
-                    {itemList ? <Itemtable /> : contact ? <Contact /> : addCustomer ? <AddCustomer /> : addItem ? <ItemForm /> : categoryList ? <CategoryList /> : customerList ? <CustomerList setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData} /> : sell ? <Sell formData={formData} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData} /> : payment ? <Payment />: analysis ? <Analysis />: null}
+                    {itemList ? <Itemtable /> : contact ? <Contact /> : addCustomer ? <AddCustomer /> : addItem ? <ItemForm /> : categoryList ? <CategoryList /> : customerList ? <CustomerList setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData} /> : sell ? <Sell formData={formData} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData} /> : payment ? <Payment />: transaction ? <Transaction />: analysis ? <Analysis />: <Analysis/>}
                 </div>
       </div>
     </>

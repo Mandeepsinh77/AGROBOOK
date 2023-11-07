@@ -1,5 +1,9 @@
 const mongoose = require("mongoose")
 const itemSchema =  new mongoose.Schema({
+    shopkeeperid: {
+        type: String,
+        require: true
+    },
     itemname: {
         type: String,
         require: true,

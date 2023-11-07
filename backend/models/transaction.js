@@ -23,6 +23,7 @@ const transactionSchema = new mongoose.Schema({
         {
             itemNo: String,
             itemname: String,
+            itemcategory: String,
             costPrice: String,
             sellingPrice: String,
             unit: String,

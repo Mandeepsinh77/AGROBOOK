@@ -1,15 +1,31 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { AppState } from "../App.js";
 
 
 function ItemListForSell({ selectedItem, setSelectedItem }) {
+
+    const useAppState = useContext(AppState);
+    const userID = useAppState.UserId;
+
     const [items, setitems] = useState([]);
     const [query, setQuery] = useState("");
     const [availableQuantities, setAvailableQuantities] = useState({}); // State to track available quantities
     // console.log(query);
     async function fetchItems() {
-        fetch('http://localhost:4000/add/fetch_items')
+        try{
+            const requestData = {
+                userID: userID,
+            };
+        
+        fetch('http://localhost:4000/add/fetch_items',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+       })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok')
@@ -29,6 +45,9 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
             .catch(error => {
                 console.error('Error fetching Items: ', error);
             })
+        }catch(err){
+            window.alert(err);
+        }
     }
 
     const handleAddClick = (item) => {
@@ -40,7 +59,7 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
                 if (selected.itemname === item.itemname) {
                     const updatedQuantity = selected.quantity + 1;
                     const updatedTotalPrice = (selected.quantity + 1) * item.sellingprice;
-                    return { ...selected, quantity: updatedQuantity, totalPrice: updatedTotalPrice, unit: item.units, costprice: item.costprice };
+                    return { ...selected, quantity: updatedQuantity, totalPrice: updatedTotalPrice, unit: item.units, costprice: item.costprice,category:item.itemcategory };
                 }
                 return selected;
             });
@@ -48,7 +67,7 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
         } else {
             // If the item doesn't exist, add it with quantity 1 and calculate total price
             // const updatedTotalPrice = item.sellingprice;
-            setSelectedItem([...selectedItem, { ...item, quantity: 1, totalPrice: item.sellingprice, unit: item.units, costprice: item.costprice }]);
+            setSelectedItem([...selectedItem, { ...item, quantity: 1, totalPrice: item.sellingprice, unit: item.units, costprice: item.costprice,category:item.itemcategory }]);
         }
 
         // const updatedQuantities = { ...availableQuantities };
@@ -86,7 +105,7 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
             <div className="mt-4  flex justify-center items-center ">
                 <input
                     type="text"
-                    placeholder="Search Customer"
+                    placeholder="Search Item"
                     className="border-4 rounded-md border-[#1F3F49] px-2 py-1 mr-2 w-[60%]"
                     onChange={e => setQuery(e.target.value)}
                 />
@@ -94,32 +113,32 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
             </div>
             <div className='mt-6 flex justify-center items-center'>
 
-                <table className="w-1/2 border-collapse">
+                <table className=" border-collapse">
                     <thead className="text-center">
                         <tr>
                             <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
-                                <div className="">Item ID</div>
+                                <div className="ml-2 mr-2">Item ID</div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Item Name</div>
+                                <div className="ml-2 mr-2">Item Name</div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Item Category</div>
+                                <div className="ml-2 mr-2">Item Category</div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Cost Price</div>
+                                <div className="ml-2 mr-2">Cost Price</div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Selling Price</div>
+                                <div className="ml-2 mr-2">Selling Price</div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Quantity</div>
+                                <div className="ml-2 mr-2">Quantity</div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Units</div>
+                                <div className="ml-2 mr-2">Units</div>
                             </th>
                             <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase " >
-                                <div className="">ADD</div>
+                                <div className="ml-2 mr-2">ADD</div>
                             </th>
 
                         </tr>

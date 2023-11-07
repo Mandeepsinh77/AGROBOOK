@@ -2,18 +2,24 @@ import React,{useState,useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
+import { useContext } from 'react';
+import { AppState } from "../App.js";
 
 const ItemForm = () => {
+    const useAppState = useContext(AppState);
+    const userID = useAppState.UserId;
+
     const [categories, setCategories] = useState([]);
     // const [count,setCount] = useState(0);
     const [formData, setFormData] = useState(
         {
+            shopkeeperid: userID,
             itemname: "",
             itemcategory: "",
             costprice: "",
             sellingprice: "",
             quantity: "",
-            units: ""
+            units: "Kilograms"
         }
     )
 
@@ -41,12 +47,15 @@ const ItemForm = () => {
             console.error("Error fetching categories:", error);
           });
       }
+
       useEffect(() => {
         fetchCategory();
         console.log(categories);
       }, []); 
+
     const handleClear = ()=>{
         setFormData({
+            shopkeeperid: userID,
             itemname: "",
             itemcategory: "",
             costprice: "",
@@ -95,6 +104,7 @@ const ItemForm = () => {
                 })
                 // Clear the form
                 setFormData({
+                    shopkeeperid: userID,
                     itemname: "",
                     itemcategory: "",
                     costprice: "",
@@ -167,13 +177,13 @@ const ItemForm = () => {
                         <div className="qty_units">
                             <div className="qty_units_row">
                                 <label htmlFor="item_qty">Quantity:</label><br />
-                                <button className="plus_item">-</button>
+                                {/* <button className="plus_item">-</button> */}
                                 <input type="number" name="item_qty" id="item_qty" placeholder=' Enter Quantity' 
                                 value={formData.quantity}
                                 required
                                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                                 />
-                                <button className="minus_item">+</button>
+                                {/* <button className="minus_item">+</button> */}
                             </div>
                             <div className="qty_units_row">
                                 <label htmlFor="item_unit">Units:</label><br />

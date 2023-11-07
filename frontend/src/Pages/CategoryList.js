@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import swal from "sweetalert";
+import { AiFillDelete } from "react-icons/ai";
+import { Button } from "@mui/material";
+import {IoMdAddCircle} from "react-icons/io";
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -74,22 +77,33 @@ function CategoryList() {
     fetchCategory();
   }
 
-  const handleDeleteCategory = async (Id)=>{
-    let data = await fetch(`http://localhost:4000/category_crud/delete-Category/${Id}`,{
-      method : 'delete',
-      headers : {
-        'Content-Type' : 'application/json'
-      }
-    })
-    console.log(data)
-    const res = await data.json();
-    swal({
-      title: "Category deleted succesfully",
-      icon: "success",
-      button: false,
-      timer: 3000
-    })
-    fetchCategory();
+  const handleDeleteCategory = async (Id) => {
+    const confirmResult = await swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this Category!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+  });
+   
+    if(confirmResult){
+
+      let data = await fetch(`http://localhost:4000/category_crud/delete-Category/${Id}`, {
+        method: 'delete',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log(data)
+      const res = await data.json();
+      swal({
+        title: "Category deleted succesfully",
+        icon: "success",
+        button: false,
+        timer: 3000
+      })
+      fetchCategory();
+    }
   }
 
   // const changeColor = (selectedRow)=>{
@@ -99,6 +113,7 @@ function CategoryList() {
   // }
   return ( 
     <div className="container mx-auto">
+      <h1 className='mt-7 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Category's Details</h1>
       <div className="mt-4  flex justify-center items-center ">
         <input
           type="text"
@@ -108,24 +123,19 @@ function CategoryList() {
           onChange={(e) => setNewCategory(e.target.value)}
           className="border-4 rounded-md border-[#1F3F49] px-2 py-1 mr-2 w-[40%]"
         />
-        <button
-          onClick={handleAddCategory}
-          className="border rounded-md bg-[#1F3F49] text-white px-2 py-1 hover:bg-[#6AB187]"
-        >
-          Add
-        </button>
+        <Button variant="outlined" onClick={handleAddCategory} style={{ color: "green", border: "3px solid green",fontWeight:"bold"}}><IoMdAddCircle /> Add</Button>
       </div>
       <div className="mt-8 flex justify-center items-center">
         <table className="w-1/2 border-collapse">
           <thead className="text-center">
             <tr>
               <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
-                <div className="">ID</div>
+                <div className="mr-10">ID</div>
               </th>
               <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                 <div className="">Name</div>
               </th>
-              <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase"></th>
+              <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -137,13 +147,8 @@ function CategoryList() {
                 <td className="border border-gray-300 px-4 py-2">
                   {category.category_name}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <button
-                    className="category_del_btn"
-                     onClick={()=>handleDeleteCategory(category._id)}
-                      >
-                    Delete
-                  </button>
+                <td className='border border-gray-200 px-4 py-2 customer_link'>
+                  <Button variant="outlined" onClick={() => handleDeleteCategory(category._id)} style={{ color: "red", border: "2px solid red" ,fontWeight:"bold"}}><AiFillDelete /> Delete</Button>
                 </td>
               </tr>
             )) : "No Data"}

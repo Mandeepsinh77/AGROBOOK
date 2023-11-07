@@ -212,7 +212,7 @@ function Payment() {
 
   const fetchingRemainingAmount = async () => {
     const customerPhone = searchParams.get('customerPhone');
-
+console.log("enter")
 
     try {
       // Fetch and set the previous remaining amount when the component loads
@@ -226,6 +226,9 @@ function Payment() {
       });
 
       if (!response.ok) {
+        const cost = parseFloat(totalCost);
+        setRemaining_amount(cost);
+        setTemp(cost)
         throw new Error('Error fetching previous remaining amount');
       }
 
@@ -233,15 +236,23 @@ function Payment() {
       console.log('fetch_remaining_amount:', data);
       // return data.previousRemainingAmount;
 
-
+     
       const cost = parseFloat(totalCost);
       const paidAmount = parseFloat(amountpaid);
       const preRemainCost = parseFloat(data.previousRemainingAmount);
+      
       const newRemaining = cost + preRemainCost;
-      // console.log(newRemaining)
+      console.log("newRamining amount")
+      console.log(newRemaining)
       setRemaining_amount(newRemaining);
+      console.log("setReminaingProps")
+      console.log(remaining_amount)
       setTemp(newRemaining)
+      console.log("setTempProps")
+      console.log(temp)
       setPreviousRemaining(data.previousRemainingAmount);
+      console.log("preRemainning from database")
+      console.log(previousRemaining)
 
     } catch (error) {
       console.error('Error fetching previous remaining amount:', error);

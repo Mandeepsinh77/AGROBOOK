@@ -1,5 +1,14 @@
 import React, { useEffect} from 'react';
 import emailjs from 'emailjs-com';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+AOS.init({
+   offset: 200,
+   duration: 800,
+   easing: 'ease-in-out',
+   once: true,
+ });
 
 const Contact = () => {
 
@@ -34,7 +43,7 @@ const Contact = () => {
     return (
         <div className='w-full h-full p-4 mt-10 bg-green-950 text-white'>
             <h1 className='text-4xl text-center pt-7 mb-6 relative after:block after:content-[attr(data-content)] after:bg-green-500 after:w-20 after:h-2 after:absolute after:top-19 after:w-36 after:rounded-2xl after:left-1/2 after:transform after:-translate-x-1/2 font-[Poppins]'>Contact Us</h1>
-            <div className="flex flex-col md:flex-row">
+            <div data-aos='fade-right' className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/2">
                     <div className='p-10'>
                         <h1 className='font-bold text-3xl tracking-wide mb-2'><ion-icon name="headset"></ion-icon> Get In Touch</h1>

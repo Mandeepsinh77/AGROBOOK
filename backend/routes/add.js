@@ -14,10 +14,7 @@ router.post("/createcustomer", [
     body('lastname', "Enter a valid lastname").isLength({ min: 3 }),
     body('phoneno', "Enter a valid lastname").isMobilePhone()
 ], async (req, res) => {
-    // console.log(req.body);
-    
-    console.log(req.body);
-    console.log("dar");
+   
     //destructure req.body
     const { shopkeeperid,firstname,middlename,lastname,address,city,pincode,state,country,email,phoneno } = req.body;
 
@@ -25,7 +22,6 @@ router.post("/createcustomer", [
     const error = validationResult(req)
 
     if (!error.isEmpty()) {
-        console.log("jmj")
         const errorMessages = error.array().map(error => error.msg);
         console.log(errorMessages)
         const message = errorMessages[0];
@@ -65,7 +61,7 @@ router.post("/createcustomer", [
 router.post("/createitem", [
 ], async (req, res) => {
     
-    const { itemname,itemcategory,costprice,sellingprice,quantity,units } = req.body;
+    const { shopkeeperid, itemname,itemcategory,costprice,sellingprice,quantity,units } = req.body;
 
     try {
         //find user with req email
@@ -78,6 +74,7 @@ router.post("/createitem", [
 
         //create user and save into DB
         item = await Item.create({
+            shopkeeperid: shopkeeperid,
             itemname: itemname,
             itemcategory: itemcategory,
             costprice: costprice,
@@ -92,26 +89,33 @@ router.post("/createitem", [
     }
 });
 
-router.get('/fetch_customers',async (req,res)=> {
-    try{
-        const customers = await Customer.find({});
+router.post('/fetch_customers', async (req, res) => {
+    try {
+        const shopkeeperID = req.body.userID;
+        console.log("fetch backend")
+        console.log(shopkeeperID)
+
+        const customers = await Customer.find({ shopkeeperid: shopkeeperID });
         res.json(customers);
     }
-    catch(error){
-        console.error("Error Fetching Customers",error);
-        res.status(500).json({error:"Internal Server Error"});
+    catch (error) {
+        console.error("Error Fetching Customers", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-router.get('/fetch_items',async (req,res) => {
-    try{
-        const items = await Item.find({});
+router.post('/fetch_items', async (req, res) => {
+    try {
+        const shopkeeperID = req.body.userID;
+        console.log("fetch backend item")
+        console.log(shopkeeperID)
+
+        const items = await Item.find({ shopkeeperid: shopkeeperID });
         res.json(items);
     }
-    catch(error)
-    {
-       console.error("Error Fetching Items");
-       res.status(500).json({error:"Internal Server Error"}); 
+    catch (error) {
+        console.error("Error Fetching Items");
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -165,5 +169,68 @@ router.delete('/deletecustomer/:customerId', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 })
+
+router.put('/updateitem/:itemId',[
+
+],async(req,res)=>{
+    try {
+        const itemId = req.params.itemId;
+        const updateData = req.body;
+
+        const item = await Item.findById(itemId);
+
+        if(!item){
+            return res.status(400).json({message:"Item Not Found"});
+        }
+        item.itemname=updateData.itemname;
+        item.itemcategory=updateData.itemcategory;
+        item.costprice=updateData.costprice;
+        item.sellingprice=updateData.sellingprice;
+        item.quantity=updateData.quantity;
+        item.units=updateData.units;
+
+        await item.save();
+
+        return res.status(200).json({message:"Item Update Successfully"});
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({message:"Customer Update Successfully"});
+    }
+})
+
+
+
+router.post('/customers/mark_visited/:customerId', (req, res) => {
+    const customerId = parseInt(req.params.customerId);
+    const customer = Customer.find((c) => c._id === customerId);
+
+    if (!customer) {
+        return res.status(404).json({ error: 'Customer not found' });
+    }
+
+    // Mark the customer as visited
+    customer.visited = true;
+
+    return res.json({ message: 'Customer marked as visited' });
+});
+ 
+
+router.post('/customers/update_status/:customerId', (req, res) => {
+    const customerId = parseInt(req.params.customerId);
+    const customer = Customer.find((c) => c._id === customerId);
+
+    if (!customer) {
+        return res.status(404).json({ error: 'Customer not found' });
+    }
+
+    if (customer.visited && customer.status === 'status') {
+        // If the customer has visited and the status is 'status', update it to 'Complete'
+        customer.status = 'Complete';
+        return res.json({ message: 'Status updated to Complete' });
+    }
+
+    return res.json({ message: 'Status remains as status' });
+});
 
 module.exports = router

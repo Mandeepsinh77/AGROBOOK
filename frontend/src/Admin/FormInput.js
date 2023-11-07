@@ -1,12 +1,17 @@
-// import "./FormInput.module.css";
 import React,{useState} from "react";
 import "./App.css"
 import swal from "sweetalert";
+import { useContext } from 'react';
+import { AppState } from "../App.js";
 
 const FormInput = () =>{
+    const useAppState = useContext(AppState);
+    console.log("FormInput")
+    console.log(useAppState.UserId)
+
     const [formData, setFormData] = useState(
         {
-            shopkeeperid: "",
+            shopkeeperid: useAppState.UserId,
             firstname: "",
             middlename: "",
             lastname: "",
@@ -44,7 +49,7 @@ const FormInput = () =>{
             })
             // Clear the form
             setFormData({
-              shopkeeperid: "",
+              shopkeeperid: useAppState.UserId,
               firstname: "",
               middlename: "",
               lastname: "",
@@ -75,17 +80,33 @@ const FormInput = () =>{
         }
       }
 
+      const handleClear = ()=>{
+        setFormData({
+            shopkeeperid: useAppState.UserId,
+            firstname: "",
+            middlename: "",
+            lastname: "",
+            address: "",
+            city: "",
+            pincode: "",
+            state: "",
+            country: "",
+            email: "",
+            phoneno: ""
+        });
+    }
+
     return(  
         <>
        <div className="customer_form">
-                <form action="" className="customer_form_details ml-12" onSubmit={handleSubmit}>
+                <form action="" className="customer_form_details ml-12" >
                     <h3 className="customer_head">Customer Details</h3>
                     <div className="my_form" id="mytable">
                         <div className="form-row">
                             <label htmlFor="adding_date">Date: </label> <br />
                             <input type="" name="adding_date" id=""  value={currentDate.toDateString()} required/>
                         </div>
-                        <div className="form-row">
+                        {/* <div className="form-row">
                             <label htmlFor="shopkeeper_id">Shopkeeper ID:</label><br />
                             <input
                                 type="text"
@@ -96,8 +117,7 @@ const FormInput = () =>{
                                 placeholder="Enter Your ID"
                                 required
                             />
-                        </div>
-
+                        </div> */}
                         <div className="form-row">
                             <label htmlFor="name">Name: </label><br />
                             &nbsp;
@@ -105,6 +125,7 @@ const FormInput = () =>{
                                 type="text"
                                 id="firstname"
                                 name="firstname"
+                                className="capitalize"
                                 value={formData.firstname}
                                 onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
                                 placeholder="Firstname"
@@ -114,6 +135,7 @@ const FormInput = () =>{
                                 type="text"
                                 id="middlename"
                                 name="middlename"
+                                className="capitalize"
                                 value={formData.middlename}
                                 onChange={(e) => setFormData({ ...formData, middlename: e.target.value })}
                                 placeholder="Middlename"
@@ -123,6 +145,7 @@ const FormInput = () =>{
                                 type="text"
                                 id="lastname"
                                 name="lastname"
+                                className="capitalize"
                                 value={formData.lastname}
                                 onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
                                 placeholder="Lastname"
@@ -135,6 +158,7 @@ const FormInput = () =>{
                                 type="text"
                                 id="address"
                                 name="address"
+                                className="capitalize"
                                 value={formData.address}
                                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                 placeholder="Address"
@@ -144,6 +168,7 @@ const FormInput = () =>{
                                 type="text"
                                 id="city"
                                 name="city"
+                                className="capitalize"
                                 value={formData.city}
                                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                                 placeholder="city"
@@ -156,12 +181,14 @@ const FormInput = () =>{
                                 value={formData.pincode}
                                 onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                                 placeholder="pincode"
+                                maxLength='6'
                                 required
                             />
                             <input
                                 type="text"
                                 id="state"
                                 name="state"
+                                className="capitalize"
                                 value={formData.state}
                                 onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                                 placeholder="state"
@@ -171,6 +198,7 @@ const FormInput = () =>{
                                 type="text"
                                 id="country"
                                 name="country"
+                                className="capitalize"
                                 value={formData.country}
                                 onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                                 placeholder="country"
@@ -195,14 +223,15 @@ const FormInput = () =>{
                                 value={formData.phoneno}
                                 onChange={(e) => setFormData({ ...formData, phoneno: e.target.value })}
                                 placeholder="phoneno"
+                                maxLength='10'
                                 required
                             />
                             </div>
                         </div>
                         <div className="form-row" id="customer_form_btn">
                             <div>
-                                <button type="submit" className="form_btn">Submit</button>
-                                <button className="form_btn" id="clear_btn" >Clear</button>
+                                <button  className="form_btn" onClick={handleSubmit}>Submit</button>
+                                <button className="form_btn" id="clear_btn" onClick={handleClear}>Clear</button>
                             </div>
                         </div>
                     </div>

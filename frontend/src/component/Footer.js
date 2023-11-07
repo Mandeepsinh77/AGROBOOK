@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 
+
 function Footer() {
   return (
     <div className='sticky text-white bg-black'>
-       <div className='bottom-0 mb-0 p-4 pt-20 md:h-80 upper_part flex flex-col justify-around md:flex-row md:justify-between'>
+       <div data-aos='fade-right' className='bottom-0 mb-0 p-4 pt-20 md:h-80 upper_part flex flex-col justify-around md:flex-row md:justify-between'>
          <div className='footer_head md:w-1/2'>
           <div> 
            <h1 className='text-3xl font-bold '>AgroBook</h1>
