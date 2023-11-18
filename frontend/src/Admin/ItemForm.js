@@ -32,7 +32,18 @@ const ItemForm = () => {
     }
 
     async function fetchCategory() {
-        fetch("http://localhost:4000/category_crud/categories") // Use the correct URL for your backend endpoint
+        const requestData = {
+            shopkeeperid: userID,
+          };
+
+        fetch("http://localhost:4000/category_crud/fetch_categories",
+        {
+         method: 'POST',
+         headers: { 
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+       }) // Use the correct URL for your backend endpoint
           .then((response) => {
             if (!response.ok) {
               throw new Error("Network response was not ok");
@@ -73,11 +84,23 @@ const ItemForm = () => {
             formData.sellingprice === "" ||
             formData.quantity === "" ||
             formData.units === ""
-
         ) {
+            console.log('formData.itemcategory: ',formData.itemcategory)
+            console.log('formData.itemName: ',formData.itemname)
+            console.log('formData: ',formData)
             swal({
                 title: "Please fill in all required fields",
-                icon: "error",
+                icon: "warning",
+                button: false,
+                timer: 3000,
+            });
+            return;
+        }
+        
+        if(formData.quantity <= 0 ){
+            swal({
+                title: "Quantity can't be negative/zero",
+                icon: "warning",
                 button: false,
                 timer: 3000,
             });
@@ -155,7 +178,7 @@ const ItemForm = () => {
                             onChange={(e) => setFormData({ ...formData, itemcategory: e.target.value })}
                             >
                              {categories.map((category) => (
-                             <option key={category._id} value={category.category_name}>{category.category_name} </option>))}
+                             <option key={category._id} value={category.category_name} selected='selected'>{category.category_name} </option>))}
                             </select>
                         </div>
                         <div className="item_input_row">
@@ -192,7 +215,7 @@ const ItemForm = () => {
                                 required
                                 onChange={(e) => setFormData({ ...formData, units: e.target.value })}
                                 >
-                                    <option value="Kg" selected>Kilograms</option>
+                                    <option value="Kg" selected='selected'>Kilograms</option>
                                     <option value="Lit">Litres</option>
                                     <option value="per unit">Unit/s</option>
                                 </select>

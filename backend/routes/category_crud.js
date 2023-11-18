@@ -29,54 +29,58 @@ router.delete('/delete-Category/:id',async (req,res)=>{
  
 })
 
-router.post(
-  "/newcategory",
-  [body("newCategory", "Enter a valid Category").isLength({ min: 1 })],
-  async (req, res) => {
-    const newCategory = req.body.newCategory;
-    console.log(newCategory);
-    const error = validationResult(req);
+router.post("/newcategory", async (req, res) => {
+  console.log("enter in backend")
+  const shopkeeperid = req.body.shopkeeperid;
+  const CategoryName = req.body.Category;
+  // console.log("shopkeeper id in backend");
+  // console.log(shopkeeperid)
+  // console.log("Category in backend");
+  // console.log(CategoryName)
+  // const error = validationResult(req);
 
-    if (!error.isEmpty()) {
-      console.log("There is some error");
-      const errorMessages = error.array().map((error) => error.msg);
-      console.log(errorMessages);
-      const message = errorMessages[0];
-      return res.status(400).json({ message });
-    }
+  // if (!error.isEmpty()) {
+  //   console.log("There is some error");
+  //   const errorMessages = error.array().map((error) => error.msg);
+  //   console.log(errorMessages);
+  //   const message = errorMessages[0];
+  //   return res.status(400).json({ message });
+  // }
 
-    try {
-      //find category with req categoryname
-      let category = await Category.findOne({
-        category_name: { $regex: newCategory, $options: 'i' }, // Case-insensitive search
-      });
-      
-      if (category) {
-        return res
-          .status(400)
-          .json({ message: 'Sorry, the given category already exists' });
-      }
-      //create category and save into DB
-      else{
-      category = await Category.create({
-        category_name: newCategory,
-      });
-    }
+  try {
+    //find category with req categoryname
+
+    let categorys = await Category.findOne({ category_name: { $regex: CategoryName, $options: 'i' }, shopkeeperid: shopkeeperid })
+
+    if (categorys) {
       return res
-        .status(200)
-        .json({ message: "Successfully Category added", category });
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ message: "Internal server error" });
+        .status(400)
+        .json({ message: 'Sorry, the given category already exists' });
     }
+    //create category and save into DB
+    else {
+      categorys = await Category.create({
+        shopkeeperid: shopkeeperid,
+        category_name: CategoryName,
+      });
+    }
+    return res
+      .status(200)
+      .json({ message: "Successfully Category added", categorys });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
+}
 );
 
-router.get('/categories', async (req, res) => {
+router.post('/fetch_categories', async (req, res) => {
   try {
     // Retrieve all categories from the database
-    console.log("Successfully fetched categories")
-    const categories = await Category.find({}, 'category_name');
+    const shopkeeperID = req.body.shopkeeperid;
+    console.log("Successfully fetched categories in backend")
+    const categories = await Category.find({shopkeeperid:shopkeeperID});
+    console.log(categories)
     res.json(categories);
   } catch (error) {
     console.error('Error fetching categories:', error);

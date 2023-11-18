@@ -1,4 +1,5 @@
 import React, {useEffect,useState} from 'react';
+import nullImage from "../images/nullImg.png"
 import swal from 'sweetalert';
 import Button from '@mui/material/Button';
 import { AiFillDelete,AiFillEdit } from 'react-icons/ai';
@@ -9,6 +10,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { useContext } from 'react';
 import { AppState } from "../App.js";
+import Tooltip from "@mui/material/Tooltip";
+
 
 function ItemList(){
     const[items,setitems] = useState([]);
@@ -21,6 +24,7 @@ function ItemList(){
     
     const useAppState = useContext(AppState);
     const userID = useAppState.UserId;
+
     const handleEditItem = async ()=>{
         console.log(editItem);
         console.log(selected._id);
@@ -72,7 +76,7 @@ function ItemList(){
         setOpen(false);
     }
 
-    async function fetchItems(){
+  async function fetchItems(){
       try{
         const requestData = {
             userID: userID,
@@ -156,6 +160,7 @@ function ItemList(){
     return(
       <div className="container mx-auto">
             <h1 className='mt-7 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Item's Details</h1>
+            <Tooltip title='Search Items'>
             <div className="mt-6  flex justify-center items-center">
                 <input
                     type="text"
@@ -164,6 +169,13 @@ function ItemList(){
                     onChange={e => setQuery(e.target.value)}
                 />
             </div>
+            </Tooltip>
+            {items.length == 0 ?
+                (<div className="flex flex-col items-center justify-center mt-36">
+                    <img src={nullImage} alt="Description of the image" />
+                    <h3>No Data</h3>
+                </div>
+                ) : (
             <div className='mt-8 flex justify-center items-center'>
 
                 <table className=" border-collapse">
@@ -180,14 +192,20 @@ function ItemList(){
                             </th>
                             <th onClick={() => sorting("costprice")} className="border-gray-700 w-auto py-2  bg-gray-700  px-4 py-4 text-white text-center text-xs font-medium  uppercase cursor-pointer">
                                 <div className="flex flex-row">Cost Price
+                                   <Tooltip title='Sort Cost Price'>
                                     <img width="20" height="20" className='ml-2' src="https://img.icons8.com/pastel-glyph/64/000000/sorting-arrows--v1.png" alt="sorting-arrows--v1" />
+                                    </Tooltip>
                                 </div>
                             </th>
                             <th onClick={() => sorting("sellingprice")} className="border-gray-700 w-auto py-2  bg-gray-700 px-4 py-4 text-white text-center text-xs font-medium  uppercase cursor-pointer">
-                                <div className="flex flex-row">Selling Price<img width="20" height="20" className='ml-2' src="https://img.icons8.com/pastel-glyph/64/000000/sorting-arrows--v1.png" alt="sorting-arrows--v1" /></div>
+                                <div className="flex flex-row">Selling Price
+                                <Tooltip title='Sort Selling Price'><img width="20" height="20" className='ml-2' src="https://img.icons8.com/pastel-glyph/64/000000/sorting-arrows--v1.png" alt="sorting-arrows--v1" /></Tooltip></div>
                             </th>
                             <th onClick={() => sorting("quantity")} className="border-gray-700 w-auto py-2  bg-gray-700 px-4 py-4 text-white text-center text-xs font-medium  uppercase cursor-pointer">
-                                <div className="flex flex-row">Quantity<img width="20" height="20" className='ml-2' src="https://img.icons8.com/pastel-glyph/64/000000/sorting-arrows--v1.png" alt="sorting-arrows--v1" /></div>
+                                <div className="flex flex-row">Quantity
+                                <Tooltip title='Sort Quantity'>
+                                <img width="20" height="20" className='ml-2' src="https://img.icons8.com/pastel-glyph/64/000000/sorting-arrows--v1.png" alt="sorting-arrows--v1" />
+                                </Tooltip></div> 
                             </th>
                             <th className="border-gray-700 w-auto py-2  bg-gray-700 px-4 py-4 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Units</div>
@@ -212,10 +230,14 @@ function ItemList(){
                                 <td className='border border-gray-300 px-4 py-2'>{item.quantity}</td>
                                 <td className='border border-gray-300 px-4 py-2'>{item.units}</td>
                                 <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                                    <Tooltip title='Edit Item'>
                                     <Button variant="outlined" onClick={()=>handleClickOpen(item)} style={{ color: "blue", border: "2px solid blue",fontWeight: "bold" }}><AiFillEdit /> Edit</Button>
+                                    </Tooltip>
                                 </td>
                                 <td className='border border-gray-200 px-4 py-2 customer_link'>
+                                    <Tooltip title='Delete Item'>
                                     <Button variant="outlined" onClick={() => handleDeleteItem(item._id)} style={{ color: "red", border: "2px solid red",fontWeight:"bold" }}><AiFillDelete /> Delete</Button>
+                                    </Tooltip>
                                 </td>
                             </tr>
                         ))}
@@ -237,6 +259,7 @@ function ItemList(){
                 </DialogActions>
             </Dialog>
             </div>
+             )}
         </div>
     )
 }

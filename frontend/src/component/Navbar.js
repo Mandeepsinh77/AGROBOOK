@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { AppState } from '../App';
 import { useData } from '../useContext/DataContext';
 import {BsShop} from 'react-icons/bs'
+import { faL } from '@fortawesome/free-solid-svg-icons';
+import Tooltip from "@mui/material/Tooltip";
 
-const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, setcategoryList, setcustomerList,setSell,setPayment  }) => {
+const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, setcategoryList, setcustomerList,setSell,setPayment,setTransaction,setAnalysis,setInvoice  }) => {
 
   const [open, setOpen] = useState(false);
 
@@ -60,7 +62,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
             <div className={`md:block ${showMobileMenu ? 'block mt-2 md:mt-0' : 'hidden md:block md:mt-0'}`}>
               <Link to="/signup">
                 <button className="bg-[#1F3F49] text-white px-5 py-2 rounded-full hover:bg-white hover:text-green-800 hover:border-2 duration-200 mx-2 drop-shadow-xl">
-                  Sign In
+                  Sign Up
                 </button>
               </Link>
               <Link to="/login">
@@ -71,6 +73,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
             </div>
             :
             <div className={`md:block ${showMobileMenu ? 'block mt-2 md:mt-0' : 'hidden md:block md:mt-0'}`}>
+              <Tooltip title='Add Customers'>
               <Link to="/">
                 <button onClick={() => {
                   setAddItem(false)
@@ -80,11 +83,16 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
                   setcustomerList(false)
                   setSell(false)
                   setPayment(false)
+                  setTransaction(false)
+                  setAnalysis(false)
+                  setInvoice(false)
                   setAddCustomer(true)
                 }} className="bg-[#1F3F49] drop-shadow-xl text-white px-5 py-2 rounded-full hover:bg-white hover:text-green-800 hover:border-2 duration-200 mx-2 ">
                   Customer +
                 </button>
               </Link>
+              </Tooltip>
+              <Tooltip title='Add Items'>
               <Link to="/">
                 <button onClick={() => {
                   setContact(false)
@@ -94,11 +102,15 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
                   setcustomerList(false)
                   setSell(false)
                   setPayment(false)
+                  setTransaction(false)
+                  setAnalysis(false)
+                  setInvoice(false)
                   setAddItem(true)
                 }} className="bg-[#1F3F49] drop-shadow-xl w-[120px] text-white px-5 py-2 rounded-full hover:bg-white hover:text-green-800 hover:border-2 duration-200 mx-2 ">
                   Item +
                 </button>
-              </Link>
+              </Link> 
+              </Tooltip>
               <Link>
                 <div className='bg-[#1F3F49] w-[50px] rounded-full ml-[320px] mt-[-43px] p-2 drop-shadow-xl hover:bg-white hover:text-black hover:border-2'>
                   <p className='text-2xl hover:text-black text-white pl-2' onClick={() => setOpen(!open)}>{data.charAt(0).toUpperCase()}</p>

@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
+import nullImg from "../images/nullImg.png"
 import swal from "sweetalert";
+import { useContext } from 'react';
+import { AppState } from "../App.js";
 import { AiFillDelete } from "react-icons/ai";
 import { Button } from "@mui/material";
 import {IoMdAddCircle} from "react-icons/io";
+import Tooltip from "@mui/material/Tooltip";
+
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
+  const useAppState = useContext(AppState);
+  const userID = useAppState.UserId;
+
   useEffect(() => {
     fetchCategory();
     console.log(categories[0]);
@@ -14,6 +22,12 @@ function CategoryList() {
 
   const handleAddCategory = (e) => {
     if (newCategory.trim() === "") {
+      swal({
+        title: "Enter Category to add",
+        icon: "warning",
+        button: false,
+        timer: 3000
+      })
       return;
     }
 
@@ -38,7 +52,19 @@ function CategoryList() {
   };
 
   async function fetchCategory() {
-    fetch("http://localhost:4000/category_crud/categories") // Use the correct URL for your backend endpoint
+    const requestData = {
+      shopkeeperid: userID,
+    };
+
+    fetch("http://localhost:4000/category_crud/fetch_categories",
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    }
+    ) // Use the correct URL for your backend endpoint
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -48,6 +74,7 @@ function CategoryList() {
       .then((data) => {
         // console.log(data);
         setCategories(data);
+        console.log(categories)
       })
       .catch((error) => {
         console.error("Error fetching categories:", error);
@@ -55,25 +82,41 @@ function CategoryList() {
   }
 
   async function addNewCategory() {
+    console.log(newCategory)
+    const requestData = {
+      shopkeeperid: userID,
+      Category: newCategory
+    };
+
+    // console.log(requestData)
+
     const url = "http://localhost:4000/category_crud/newcategory";
     const data = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ newCategory }),
+      body: JSON.stringify(requestData),
     });
 
     const res = await data.json();
-    console.log(res);
+    if (res.status == 400) {
+      swal({
+        title: "Category not added",
+        icon: "error",
+        button: false,
+        timer: 3000
+      })
+    }
+    else{// console.log(res);
     swal({
       title: "Category Added succesfully",
       icon: "success",
       button: false,
       timer: 3000
     })
+  }
     setNewCategory("");
-
     fetchCategory();
   }
 
@@ -114,6 +157,7 @@ function CategoryList() {
   return ( 
     <div className="container mx-auto">
       <h1 className='mt-7 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Category's Details</h1>
+      <Tooltip title='Search Category'>
       <div className="mt-4  flex justify-center items-center ">
         <input
           type="text"
@@ -123,8 +167,17 @@ function CategoryList() {
           onChange={(e) => setNewCategory(e.target.value)}
           className="border-4 rounded-md border-[#1F3F49] px-2 py-1 mr-2 w-[40%]"
         />
+        <Tooltip title='Add Category to List'>
         <Button variant="outlined" onClick={handleAddCategory} style={{ color: "green", border: "3px solid green",fontWeight:"bold"}}><IoMdAddCircle /> Add</Button>
+        </Tooltip>
       </div>
+      </Tooltip>
+      {categories.length == 0 ? (
+        <div className="flex flex-col items-center justify-center mt-36">
+          <img src={nullImg} alt="Description of the image" />
+          <h3>No Data</h3>
+        </div>
+      ) : (
       <div className="mt-8 flex justify-center items-center">
         <table className="w-1/2 border-collapse">
           <thead className="text-center">
@@ -138,7 +191,7 @@ function CategoryList() {
               <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">Delete</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody> 
             {categories? categories && categories.map((category, index) => (
               // {console.log(category.category_name)}
               <tr className="text-center capitalize category_row hover:border-2 hover:border-black hover:rounded-md" style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
@@ -148,13 +201,16 @@ function CategoryList() {
                   {category.category_name}
                 </td>
                 <td className='border border-gray-200 px-4 py-2 customer_link'>
+                <Tooltip title='Delete Category'>
                   <Button variant="outlined" onClick={() => handleDeleteCategory(category._id)} style={{ color: "red", border: "2px solid red" ,fontWeight:"bold"}}><AiFillDelete /> Delete</Button>
+                  </Tooltip>
                 </td>
               </tr>
             )) : "No Data"}
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 

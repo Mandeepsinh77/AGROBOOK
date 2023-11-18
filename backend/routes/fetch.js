@@ -3,7 +3,8 @@ const router = express.Router();
 const Transaction = require('../models/transaction'); // Adjust the path to your model
 const Payment = require('../models/payment'); 
 
-router.get('/item_grp_category', async (req, res) => {
+router.post('/item_grp_category', async (req, res) => {
+  const shopkeeperid = req.body.shopkeeperid;
   try {
     const categories = await Transaction.aggregate([
         {
@@ -12,6 +13,7 @@ router.get('/item_grp_category', async (req, res) => {
        {
         $group: {
           _id: {
+            shopkeeperid: shopkeeperid,
             transactionId: "$_id",
             itemcategory: "$items.itemcategory"
           }

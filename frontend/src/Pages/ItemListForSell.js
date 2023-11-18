@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { AppState } from "../App.js";
+import nullImage from "../images/nullImg.png";
 
 
 function ItemListForSell({ selectedItem, setSelectedItem }) {
@@ -51,6 +52,9 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
     }
 
     const handleAddClick = (item) => {
+
+        console.log('Adding item:', item);
+        
         const existingItem = selectedItem.find((selected) => selected.itemname === item.itemname);
 
         if (existingItem) {
@@ -111,6 +115,12 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
                 />
 
             </div>
+            {items.length == 0 ?
+                (<div className="flex flex-col items-center justify-center mt-36">
+                    <img src={nullImage} alt="Description of the image" />
+                    <h3>No Data</h3>
+                </div>
+                ) : (
             <div className='mt-6 flex justify-center items-center'>
 
                 <table className=" border-collapse">
@@ -163,6 +173,7 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
                 </table>
 
             </div>
+                )}
         </div>
     )
 

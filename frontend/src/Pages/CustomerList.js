@@ -1,4 +1,5 @@
 import React, {useEffect,useState} from 'react';
+import nullImg from "../images/nullImg.png"
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
@@ -18,8 +19,9 @@ import {FcViewDetails,FcSalesPerformance} from 'react-icons/fc';
 import {AiFillDelete,AiFillEdit} from 'react-icons/ai';
 import { useContext } from 'react';
 import { AppState } from "../App.js";
+import Tooltip from "@mui/material/Tooltip";
 
-function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setFormData ,setPayment }){
+function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setFormData ,setPayment,setinvoice}){
     const[customers,setCustomers] = useState([]);
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
@@ -158,6 +160,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         setAddCustomer(false)
         setcustomerList(false)
         setPayment(false)
+        setinvoice(false)
         setSell(true)
     }
 
@@ -245,6 +248,12 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                 Search
             </button> */}
         </div>
+        {customers.length == 0 ?
+                (<div className="flex flex-col items-center justify-center mt-36">
+                    <img src={nullImg} alt="Description of the image" />
+                    <h3>No Data</h3>
+                </div>
+                ) : (
         <div className='ml-8 mt-8 flex justify-center items-center'>
             <table className="w-1/2 border-collapse">
                 <thead className="text-center">
@@ -280,6 +289,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                                 <div className="">Delete</div>
                             </th>
                     </tr>
+
                 </thead>
                 <tbody>
                     {customers.filter((customer)=>customer.firstname.toLowerCase().includes(query) || customer.lastname.toLowerCase().includes(query)||customer.phoneno.includes(query)).map((customer,index)=> (
@@ -289,13 +299,19 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                             <td className='border border-gray-300 px-4 py-2'>{customer.lastname}</td>
                             <td className='border border-gray-300 px-4 py-2'>{customer.phoneno}</td>
                             <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                                <Tooltip title='Customer Info'>
                                     <Button variant="outlined" onClick={() => handleClickOpen1(customer)}><FcViewDetails/> Details</Button>
+                                </Tooltip>
                             </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                                <Tooltip title='Customer Info Edit'>
                                     <Button variant="outlined" onClick={() => handleClickOpen2(customer)}><AiFillEdit/> Edit</Button>
+                                </Tooltip>
                             </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                                <Tooltip title='Sell to Customer'>
                                     <Button variant="outlined" onClick={() => { handleSetSell(index, customer) }}><FcViewDetails /> Sale</Button>
+                                </Tooltip>
                             </td>
                             <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500'>
                                     <a href="/status">
@@ -305,10 +321,14 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                                     </a>
                             </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link'>
+                                <Tooltip title='Payment status'>
                                     <Button variant="outlined" onClick={() => handleClickOpen3(customer)} style={{ color: "black", border: "2px solid black", fontWeight: "bold" }}> Check</Button>
+                                </Tooltip>
                                 </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link'>
+                            <Tooltip title='Delete Customer'>
                                     <Button variant="outlined" onClick={()=>handleDeltecustomer(customer._id)} style={{color:"red",border:"1px solid red"}}><AiFillDelete/> Delete</Button>
+                            </Tooltip>
                                 </td>
                         </tr>
                     ))}
@@ -316,6 +336,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
             </table>
 
         </div>
+         )}
         <Dialog
                 fullScreen
                 open={open1}

@@ -6,8 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useContext } from 'react';
 import { AppState} from "../App.js";
+import Tooltip from "@mui/material/Tooltip";
+import nullImg from "../images/nullImg.png"
+ 
 
-function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setPayment }) {
+function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setPayment ,setInvoice }) {
     var today = new Date();
     const useAppState = useContext(AppState);
     const userID = useAppState.UserId;
@@ -251,6 +254,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                 
         // Prepare the data to be sent to your server
         const dataToSave = {
+            shopkeeperid : userID,
             customerId: formData.customerId,
             customerName: formData.customerFirstname + ' ' + formData.customerLastname,
             customerPhone: formData.customerPhone,
@@ -304,6 +308,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                 setSell(false);
                 setcustomerList(false);
                 setcategoryList(false);
+                setInvoice(false)
                 setPayment(true);
                 navigate(`/?customerName=${formData.customerFirstname} ${formData.customerLastname}&totalCost=${totalCost}&customerPhone=${formData.customerPhone}`);
             }
@@ -337,12 +342,18 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                         <div className="mt-4  flex justify-center items-center ">
                             <input
                                 type="text"
-                                placeholder="Search Customer"
+                                placeholder="Search Item"
                                 className="border-4 rounded-md border-[#1F3F49] px-2 py-1 mr-2 w-[60%]"
                                 onChange={e => setQuery(e.target.value)}
                             />
 
                         </div>
+                        {items.length == 0 ?
+                (<div className="flex flex-col items-center justify-center mt-36">
+                    <img src={nullImg} alt="Description of the image" />
+                    <h3>No Data</h3>
+                </div>
+                ) : (
                         <div className='mt-6 flex justify-center items-center'>
 
                             <table className="w-1/2 border-collapse">
@@ -385,9 +396,12 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                                             <td className='border border-gray-300 px-4 py-2'>{item.sellingprice}</td>
                                             <td className='border border-gray-300 px-4 py-2'>{item.quantity}</td>
                                             <td className='border border-gray-300 px-4 py-2'>{item.units}</td>
-                                            <td className='border border-gray-300 px-4 py-2 cursor-pointer'><button className='w-6 h-6 rounded-full text-white bg-gray-700 ' onClick={() => handleAddClick(item)}>
+                                            <td className='border border-gray-300 px-4 py-2 cursor-pointer'>
+                                                <Tooltip title='Add a Item'><button className='w-6 h-6 rounded-full text-white bg-gray-700 ' onClick={() => handleAddClick(item)}>
                                                 <FontAwesomeIcon icon={faPlus} />
-                                            </button></td>
+                                            </button>
+                                            </Tooltip>
+                                            </td>
                                             {/* <td className='border border-gray-300 px-4 py-2 '><input type="text" className="narrow-column border-b-4" /></td> */}
                                         </tr>
                                     ))}
@@ -395,6 +409,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                             </table>
 
                         </div>
+                    )}
                     </div>
                 </div>
             </div>
@@ -424,7 +439,9 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                                         <span className='below-span'>Category: {item.itemcategory}</span>
                                     </div>
                                     <p className="">
+                                        <Tooltip title='Delete this Item'>
                                         <button onClick={() => handleRemoveItem(index, item)}> <FontAwesomeIcon icon={faTrash} /></button>
+                                        </Tooltip>
                                     </p>
                                     <div className="font-bold">
                                         <span>Total Price:</span><br />
@@ -441,11 +458,13 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                     <span className='ml-10 mt-5'>Total Cost:</span><br />
                     <span className='mr-10 mt-5'>{totalCost}</span>
                 </div>
+                <Tooltip title='Next step to Payment'>
                 <button onClick={handlePrintButtonClick}
                     className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 ml-36 mt-5 rounded"
                 >
                     Proceed To Payment
                 </button>
+                </Tooltip>
             </div>
         </div>
     )

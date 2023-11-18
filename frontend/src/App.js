@@ -24,6 +24,9 @@ import ScrollToTop from './component/ScrollToTop';
 import Sell from './Pages/Sell'
 import Analysis from './Pages/Analysis';
 import Payment from "./Pages/Payment.js";
+import Bill from './Pages/Bill';
+import Invoice from './Pages/Invoice.js';
+
 const AppState = createContext();
 
 
@@ -63,6 +66,8 @@ function App() {
           <Route path="/sell" element={<Sell />} />
           <Route path="/analysis" element={<Analysis/>}/>
           <Route path="/payment" element={<Payment />} />
+          <Route path="/invoice" element={<Invoice />} />
+          <Route path="/bill" element={<Bill />} />
         </Routes>
       </div>
     </AppState.Provider>

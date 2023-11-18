@@ -24,6 +24,19 @@
     background-color: rgb(199, 24, 24);
     color: white;
 }
+.invoice_btn{
+    font-family: "Arimo";
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #1F3F49;
+    color: white;
+    border-radius: 5px;
+}
+.invoice_btn:hover{
+    background-color: rgb(13, 162, 73);
+    color: white;
+}
 
 /* sell page */
 .narrow-column {
@@ -52,4 +65,7 @@
 
 .below-span {
     margin-left: 15px;
+}
+#bill-section.printing button {
+    display: none;
 }

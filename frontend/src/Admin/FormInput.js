@@ -64,9 +64,9 @@ const FormInput = () =>{
           } else {
             // Handle errors if necessary
             swal({
-                title: "Error Adding Customer",
-                icon: "error",
-                button: false,
+                title: "Enter all Detail properly (Note: Make sure Phone Number & Email ID should be unique for each customer)",
+                icon: "warning",
+                button: false, 
                 timer: 3000
             })
           }

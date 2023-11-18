@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { AppState } from "../App.js";
 import { useLocation } from 'react-router-dom';
+import swal from 'sweetalert';
+import { useNavigate } from 'react-router-dom';
+import Tooltip from "@mui/material/Tooltip";
 
 function Payment() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const useAppState = useContext(AppState);
+  const shopkeeperid = useAppState.UserId
+
   const searchParams = new URLSearchParams(location.search);
   const customerName = searchParams.get('customerName');
   const totalCost = searchParams.get('totalCost');
   const customerPhone = searchParams.get('customerPhone');
+
 
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [amountpaid, setAmountpaid] = useState();
@@ -40,11 +50,9 @@ function Payment() {
 
 
   const handleAmountPaidChange = (e) => {
-
     setAmountpaid(e.target.value);
-
-
   };
+  
   const handleAmountPaidKeyPress = (e) => {
     if (e.key === 'Enter') {
       // Enter key is pressed, calculate the new Remaining Amount
@@ -69,6 +77,7 @@ function Payment() {
     if (paymentMethod === 'Cheque') {
       // Create a JSON payload from the chequeDetails
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -103,6 +112,7 @@ function Payment() {
     }
     else if (paymentMethod === 'Card') {
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -138,6 +148,7 @@ function Payment() {
     }
     else if (paymentMethod === 'UPI') {
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -174,6 +185,7 @@ function Payment() {
     }
     else {
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -199,6 +211,14 @@ function Payment() {
           return response.json();
         })
         .then((data) => {
+          swal({
+            title: "Payment done",
+            icon: "success",
+            button: false,
+            timer: 3000
+          })
+          setCashDetails([])
+          setCashDetails({ ...cashDetails, cash_amount: 0 })
           console.log('Cash details saved:', data);
           // Handle success as needed (e.g., show a success message)
         })
@@ -208,12 +228,19 @@ function Payment() {
         });
     }
 
+    setAmountpaid(0)
+    fetchingRemainingAmount();
+    navigate("/payment")
+
   };
 
   const fetchingRemainingAmount = async () => {
     const customerPhone = searchParams.get('customerPhone');
 console.log("enter")
-
+     const requestData = {
+       customerPhone: customerPhone,
+       shopkeeperid: shopkeeperid
+     }
     try {
       // Fetch and set the previous remaining amount when the component loads
       const url = "http://localhost:4000/payment/fetch_remaining_amount";
@@ -222,7 +249,7 @@ console.log("enter")
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ customerPhone }),
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
@@ -422,13 +449,14 @@ console.log("enter")
           </div>
         </div>
       )}
-
+      <Tooltip title='Final Step'>
       <button
         onClick={handleConfirmPayment}
         className="bg-green-500 hover.bg-green-600 text-white font-semibold py-2 px-4 rounded"
       >
         Confirm Payment
       </button>
+      </Tooltip>
     </div>
   );
 }

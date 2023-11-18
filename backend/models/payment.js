@@ -1,6 +1,10 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose;
 const PaymentSchema = new Schema({
+    shopkeeperid: {
+        type: String,
+        require: true
+    },
     totalCost: {
         type: String,
         require: true

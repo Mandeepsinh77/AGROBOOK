@@ -3,6 +3,10 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
+    shopkeeperid: {
+        type: String,
+        require:true
+    },
     customerId: {
         type: String,
         require: true,

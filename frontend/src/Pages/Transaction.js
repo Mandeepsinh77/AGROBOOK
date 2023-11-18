@@ -1,12 +1,27 @@
 import React, { useEffect, useState } from 'react'
+import { useContext } from 'react';
+import { AppState } from "../App.js";
+import Tooltip from "@mui/material/Tooltip";
 
 function Transaction() {
     const [payments, setpayments] = useState([]);
     const [query, setQuery] = useState("");
-    
+    const useAppState = useContext(AppState);
+    const userID = useAppState.UserId;
+
     async function fetchTransaction() {
         try {
-            fetch('http://localhost:4000/payment/fetch_customer_data')
+                const requestData = {
+                    shopkeeperid: userID,
+                };
+
+            fetch('http://localhost:4000/payment/fetch_customer_data',{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+                })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok')
@@ -38,6 +53,7 @@ function Transaction() {
     return (
         <div className='flex flex-col justify-center items-center mt-8'>
             <h1 className='font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Transcation Details</h1>
+            <Tooltip title='Search your Transactions'>
             <div className="mt-4  flex justify-center items-center ">
                 <input
                     type="text"
@@ -50,7 +66,9 @@ function Transaction() {
                 Search
             </button> */}
             </div>
+            </Tooltip>
             <div className=' ml-8 mt-8 flex justify-center items-center'>
+                {/* <div className='h-96 overflow-y-auto'> */} 
                 <table className="w-1/2 border-collapse">
                     <thead className="text-center">
                         <tr>
@@ -92,7 +110,6 @@ function Transaction() {
                         ))}
                     </tbody>
                 </table>
-
             </div>
         </div>
     )

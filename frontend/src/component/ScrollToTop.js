@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Tooltip from "@mui/material/Tooltip";
 
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -43,7 +44,9 @@ const ScrollToTop = () => {
             cursor: "pointer",
           }}
         >
+          <Tooltip title='To Top'>
           <ion-icon name="caret-up-circle-outline"></ion-icon>
+          </Tooltip>
         </span>
       ) : (
         <span></span>

@@ -9,7 +9,8 @@ const save=require("./routes/save.js")
 const cors = require("cors")
 const Payment = require("./routes/payment.js");
 const fetch = require('./routes/fetch.js');
-
+const transaction = require('./routes/transaction.js')
+const generate = require("./routes/generate.js");
 
 const app = express();
 const port = 4000;
@@ -28,6 +29,8 @@ app.use("/save", save);
 app.use("/delete", dlt);
 app.use("/payment", Payment);
 app.use("/fetch",fetch);
+app.use("/transaction",transaction);
+app.use("/generate",generate)
 
 app.listen(port, (err) => {
     console.log(`Server Running on port ${port}`)

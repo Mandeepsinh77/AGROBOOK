@@ -10,6 +10,7 @@ router.post('/save_transaction', async (req, res) => {
 
   try {
     const {
+      shopkeeperid,
       customerId,
       customerName,
       customerPhone,
@@ -19,6 +20,7 @@ router.post('/save_transaction', async (req, res) => {
     } = req.body;
 
     const transaction = new Transaction({
+      shopkeeperid,
       customerId,
       customerName,
       customerPhone,
@@ -35,9 +37,10 @@ router.post('/save_transaction', async (req, res) => {
   }
 });
 
-router.get('/fetch_transaction',async(req,res)=>{
+router.post('/fetch_transaction',async(req,res)=>{
   try{
-    const transaction = await Transaction.find({});
+    const shopkeeperID = req.body.shopkeeperid;
+    const transaction = await Transaction.find({shopkeeperid:shopkeeperID});
     // console.log(customers)
     res.json(transaction);
 

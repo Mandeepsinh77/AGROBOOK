@@ -30,7 +30,7 @@ router.post("/createcustomer", [
 
     try {
         //find user with req email
-        let customer = await Customer.findOne({ email: req.body.email })
+        let customer = await Customer.findOne({ email: req.body.email,shopkeeperid: shopkeeperid })
 
         //if user exist then send bad request
         if (customer) {
@@ -65,7 +65,7 @@ router.post("/createitem", [
 
     try {
         //find user with req email
-        let item = await Item.findOne({ itemname: req.body.itemname })
+        let item = await Item.findOne({ itemname: req.body.itemname, shopkeeperid: shopkeeperid})
 
         //if user exist then send bad request
         if (item) {
