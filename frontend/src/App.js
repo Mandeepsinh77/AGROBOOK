@@ -1,6 +1,7 @@
 
 import './App.css';
 // import Navbar from './component/Navbar';
+import { BrowserRouter } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './Pages/HomePage';
 import SignupPage from './component/SignupPage.js';
@@ -27,6 +28,8 @@ import Payment from "./Pages/Payment.js";
 import Bill from './Pages/Bill';
 import Invoice from './Pages/Invoice.js';
 
+import PersistLogin from './component/PersistLogin.js';
+
 const AppState = createContext();
 
 
@@ -38,13 +41,21 @@ function App() {
     // <BrowserRouter>
     <AppState.Provider value={{ login, setLogin, UserId, setUserId }}>
       <div className='app'>
+        <BrowserRouter>
         <Routes>
-          {
+        <Route element={<PersistLogin />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/CustomerList" element={<CustomerList />} />
+              <Route path="/newcategory" element={<CategoryList />} />
+              <Route path="/payment" element={<Payment />} />
+          </Route>
+
+          {/* {
             login ?
               <Route path="/" element={<Dashboard />} />
-              :
+              : */}
               <Route path="/" element={<HomePage />} />
-          }
+          {/* } */}
 
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<Login />} />
@@ -69,9 +80,9 @@ function App() {
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/bill" element={<Bill />} />
         </Routes>
+        </BrowserRouter>
       </div>
     </AppState.Provider>
-    // </BrowserRouter>
 
   );
 }

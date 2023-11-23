@@ -7,13 +7,15 @@ router.post('/item_grp_category', async (req, res) => {
   const shopkeeperid = req.body.shopkeeperid;
   try {
     const categories = await Transaction.aggregate([
+       {
+         $match: {shopkeeperid: shopkeeperid}
+        },
         {
             $unwind:"$items",
         },
-       {
+        {
         $group: {
           _id: {
-            shopkeeperid: shopkeeperid,
             transactionId: "$_id",
             itemcategory: "$items.itemcategory"
           }

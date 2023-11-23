@@ -22,7 +22,10 @@ const UserSchema = new Schema({
         type: Date,
         default: new Date()
     },
-    verifytoken:String
+    verifytoken:String,
+    user_token:{
+        type: String,
+    }
 })
 
 module.exports = mongoose.model("user", UserSchema);

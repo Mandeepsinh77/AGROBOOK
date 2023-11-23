@@ -11,6 +11,7 @@ function Payment() {
   const navigate = useNavigate();
   const useAppState = useContext(AppState);
   const shopkeeperid = useAppState.UserId
+  var today = new Date();
 
   const searchParams = new URLSearchParams(location.search);
   const customerName = searchParams.get('customerName');
@@ -78,6 +79,7 @@ function Payment() {
       // Create a JSON payload from the chequeDetails
       const paymentData = {
         shopkeeperid,
+        today,
         totalCost,
         customerName,
         customerPhone,
@@ -113,6 +115,7 @@ function Payment() {
     else if (paymentMethod === 'Card') {
       const paymentData = {
         shopkeeperid,
+        today,
         totalCost,
         customerName,
         customerPhone,
@@ -149,6 +152,7 @@ function Payment() {
     else if (paymentMethod === 'UPI') {
       const paymentData = {
         shopkeeperid,
+        today,
         totalCost,
         customerName,
         customerPhone,
@@ -186,6 +190,7 @@ function Payment() {
     else {
       const paymentData = {
         shopkeeperid,
+        today,
         totalCost,
         customerName,
         customerPhone,
@@ -230,7 +235,7 @@ function Payment() {
 
     setAmountpaid(0)
     fetchingRemainingAmount();
-    navigate("/payment")
+    // navigate("/payment")
 
   };
 

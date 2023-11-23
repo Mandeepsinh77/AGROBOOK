@@ -162,6 +162,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         setPayment(false)
         setinvoice(false)
         setSell(true)
+        localStorage.setItem('name1','sell');
     }
 
     const handleClickOpen3 = async (customer) => {
@@ -225,6 +226,8 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
     }
 
     useEffect(()=>{
+        const name1 = localStorage.getItem('name1') ; 
+        if (name1 === "sell") setSell(true) ;
         fetchCustomers();
         const initialCustomerStatus = customers.reduce((status, customer) => {
             status[customer._id] = 'Status';

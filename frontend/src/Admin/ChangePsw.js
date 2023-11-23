@@ -60,7 +60,7 @@ function PasswordChange() {
             <img src={Logo} alt="" style={{ height: "50px", width: "60px" }} className='mix-blend-multiply' />
             <Link to="/"><h1 className="ml-2 text-3xl text-black font-bold font-[Arimo]">AgroBook</h1></Link>
           </div>
-          <button onClick={() => navigate('/')} className="relative ml-auto text-center px-4 border-2 border-green-800 p-2 sm:rounded-sm lg:rounded-full md:rounded-md hover:bg-green-800 hover:text-white hover:shadow-lg hover:duration-500"><ion-icon name="arrow-undo"></ion-icon> Back to your account</button>
+          <button onClick={() => navigate('/dashboard')} className="relative ml-auto text-center px-4 border-2 border-green-800 p-2 sm:rounded-sm lg:rounded-full md:rounded-md hover:bg-green-800 hover:text-white hover:shadow-lg hover:duration-500"><ion-icon name="arrow-undo"></ion-icon> Back to your account</button>
         </div>
         <div className="bg-white rounded-lg p-6 shadow-lg sm:w-full md:w-96 lg:w-96 xl:w-96 mx-auto mt-4 drop-shadow-2xl">
           <img src={imgChange} alt="" className='mx-auto w-1/2 h-1/2' />

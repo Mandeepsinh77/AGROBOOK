@@ -28,7 +28,7 @@ router.get('/confirm_cheque_payment/:customerphoneno', async (req, res) => {
 router.post('/confirm_cheque_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const { shopkeeperid,totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, chequeDetails } = req.body;
+        const { shopkeeperid,today, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, chequeDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -46,6 +46,7 @@ router.post('/confirm_cheque_payment', async (req, res) => {
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
             shopkeeperid : shopkeeperid,
+            date: today,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -68,7 +69,7 @@ router.post('/confirm_cheque_payment', async (req, res) => {
 router.post('/confirm_card_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const {shopkeeperid, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cardDetails } = req.body;
+        const {shopkeeperid, today, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cardDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -86,6 +87,7 @@ router.post('/confirm_card_payment', async (req, res) => {
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
             shopkeeperid:shopkeeperid,
+            date: today,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -108,7 +110,7 @@ router.post('/confirm_card_payment', async (req, res) => {
 router.post('/confirm_upi_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const { shopkeeperid,totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, upiDetails } = req.body;
+        const { shopkeeperid,today, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, upiDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -122,6 +124,7 @@ router.post('/confirm_upi_payment', async (req, res) => {
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
             shopkeeperid : shopkeeperid,
+            date: today,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -144,7 +147,7 @@ router.post('/confirm_upi_payment', async (req, res) => {
 router.post('/confirm_cash_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const {shopkeeperid, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cashDetails } = req.body;
+        const {shopkeeperid, today, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cashDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -158,6 +161,7 @@ router.post('/confirm_cash_payment', async (req, res) => {
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
             shopkeeperid : shopkeeperid,
+            date: today,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,

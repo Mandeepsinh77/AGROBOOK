@@ -69,7 +69,7 @@ function Transaction() {
             </Tooltip>
             <div className=' ml-8 mt-8 flex justify-center items-center'>
                 {/* <div className='h-96 overflow-y-auto'> */} 
-                <table className="w-1/2 border-collapse">
+                <table className="w-1/2 border-collapse table-auto">
                     <thead className="text-center">
                         <tr>
                             <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
@@ -96,7 +96,7 @@ function Transaction() {
                         </tr>
                     </thead>
                     <tbody>
-                    {payments.map((payment, index) => (
+                    {payments.filter((payments) => payments.customername.toLowerCase().includes(query.toLowerCase()) || payments.customerphoneno.includes(query)).map((payment, index) => (
                             <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={payment._id} >
                                 <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
                                 <td className='border border-gray-300 px-4 py-2'>{payment.customername}</td>

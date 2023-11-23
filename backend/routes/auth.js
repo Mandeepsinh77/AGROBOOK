@@ -116,7 +116,15 @@ router.post("/login", [
             }
         }
 
-        return res.status(200).json({ message: "Successfully Logged In" ,data})
+        // creating a JWT token
+        const jwtToken = jwt.sign(data, 'test');
+        res.cookie('jwt', jwtToken, { httpOnly: true })
+
+        // saving the JWT token of the current user in the DB
+        await User.findByIdAndUpdate(user._id, { ...user._doc, user_token: jwtToken }, { new: true });
+
+        return res.status(200).json({ message: "Successfully Logged In", jwtToken })
+        
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });

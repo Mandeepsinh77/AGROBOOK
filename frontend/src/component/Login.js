@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AppState } from '../App';
 import { useData } from '../useContext/DataContext';
+import { jwtDecode } from 'jwt-decode'
+import axios from 'axios';
 
 const Login = () => {
   const useAppState = useContext(AppState);
@@ -21,17 +23,14 @@ const Login = () => {
 
   async function validateData() {
     const url = "http://localhost:4000/auth/login";
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
-    })
-    const data = await res.json();
-    const username = data.data.user.username;
-    const shopname = data.data.user.shopname;
-    const userId = data.data.user.id;
+    const res = await axios.post(url, formData, { withCredentials: true });
+    console.log(res);
+    const data = res.data;
+    const jwtToken = data.jwtToken;
+    const user = jwtDecode(jwtToken).user;
+    const username = user.username;
+    const shopname = user.shopname;
+    const userId = user.id;
     useAppState.setUserId(userId)
 
     console.log(username)
@@ -39,7 +38,7 @@ const Login = () => {
     setData(username);
     setshopname(shopname);
    
-    if (res.ok) {
+    if (res.status === 200) {
       useAppState.setLogin(true);
       swal({
         title: "Successfully Loged In",
@@ -55,7 +54,7 @@ const Login = () => {
       //   confirmPassword: ""
       // });
 
-      navigate("/")
+      navigate("/dashboard")
       
 
 

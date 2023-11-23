@@ -9,14 +9,14 @@ import { DataProvider } from './useContext/DataContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // mandeep
-  <BrowserRouter>
-    {/* <React.StrictMode> */}
+  // <BrowserRouter>
+     <React.StrictMode>
       <DataProvider>
 
       <App />
       </DataProvider>
-    {/* </React.StrictMode> */}
-  </BrowserRouter>
+   </React.StrictMode> 
+  // </BrowserRouter>
   //ashish
 );
 

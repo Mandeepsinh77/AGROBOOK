@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Navbar from "../component/Navbar.js";
 import Itemtable from "../component/Itemtable.js";
 import { Link } from "react-router-dom";
@@ -47,7 +47,17 @@ export default function Dashboard() {
   const [payment, setPayment] = useState(false);
   const [transaction,setTransaction] = useState(false);
   const [invoice,setInvoice] = useState(false);
-  const [reports,setReports] = useState(false)
+  const [reports,setReports] = useState(false);
+
+  useEffect(()=>{
+    const name = localStorage.getItem('name') ; 
+    // if(name === 'analysis') setAnalysis(true) ;
+    if(name === 'transaction') setTransaction(true) ;
+    if(name === 'customerList') setcustomerList(true) ;
+    if(name === 'itemList') setitemList(true) ;
+    if(name === 'categoryList') setcategoryList(true) ;
+    if(name === 'invoice') setInvoice(true) ;
+   }, [])
 
   return (
     <>
@@ -71,7 +81,7 @@ export default function Dashboard() {
               />
               <Tooltip title='Go to Dashboard'>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setContact(false);
@@ -84,6 +94,7 @@ export default function Dashboard() {
                   setTransaction(false);
                   setInvoice(false);
                   setAnalysis(true);
+                  // localStorage.setItem('name','analysis');
                 }}
               >
               DashBoard
@@ -95,7 +106,7 @@ export default function Dashboard() {
               }`}>
             <Tooltip title='Go to Transaction List'>
              <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setContact(false);
@@ -108,6 +119,7 @@ export default function Dashboard() {
                   setAnalysis(false);
                   setInvoice(false);
                   setTransaction(true);
+                  localStorage.setItem('name','transaction');
                 }}
               >
               Transaction
@@ -121,7 +133,7 @@ export default function Dashboard() {
             >
               <Tooltip title='Go to Customer List'>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setContact(false);
@@ -134,6 +146,7 @@ export default function Dashboard() {
                   setTransaction(false);
                   setInvoice(false);
                   setcustomerList(true);
+                  localStorage.setItem('name','customerList');
                 }}
               >
                 Customer List
@@ -147,7 +160,7 @@ export default function Dashboard() {
             >
               <Tooltip title='Go to Item List'>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setContact(false);
@@ -160,6 +173,7 @@ export default function Dashboard() {
                   setcustomerList(false);
                   setInvoice(false);
                   setitemList(true);
+                  localStorage.setItem('name','itemList');
                 }}
               >
                 Item List
@@ -173,7 +187,7 @@ export default function Dashboard() {
             >
               <Tooltip title='Go to Category List'>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setitemList(false);
@@ -186,6 +200,7 @@ export default function Dashboard() {
                   setTransaction(false);
                   setInvoice(false);
                   setcategoryList(true);
+                  localStorage.setItem('name','categoryList');
                 }}
               >
                 category List
@@ -199,7 +214,7 @@ export default function Dashboard() {
             >
               <Tooltip title='Get Invoice'>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setitemList(false);
@@ -212,6 +227,7 @@ export default function Dashboard() {
                   setTransaction(false);
                   setcategoryList(false);
                   setInvoice(true);
+                  localStorage.setItem('name','invoice');
                 }}
               >
                Invoice

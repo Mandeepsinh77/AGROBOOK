@@ -7,6 +7,7 @@ import { useData } from '../useContext/DataContext';
 import {BsShop} from 'react-icons/bs'
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "@mui/material/Tooltip";
+import useLogout from '../hooks/useLogout';
 
 const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, setcategoryList, setcustomerList,setSell,setPayment,setTransaction,setAnalysis,setInvoice  }) => {
 
@@ -16,7 +17,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
 
   const useAppState = useContext(AppState);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-
+  const logout = useLogout();
   // const [customer,setCustomer]=new useState(false);
   const toggleMobileMenu = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -74,7 +75,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
             :
             <div className={`md:block ${showMobileMenu ? 'block mt-2 md:mt-0' : 'hidden md:block md:mt-0'}`}>
               <Tooltip title='Add Customers'>
-              <Link to="/">
+              <Link to="/dashboard">
                 <button onClick={() => {
                   setAddItem(false)
                   setContact(false)
@@ -93,7 +94,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
               </Link>
               </Tooltip>
               <Tooltip title='Add Items'>
-              <Link to="/">
+              <Link to="/dashboard">
                 <button onClick={() => {
                   setContact(false)
                   setitemList(false)
@@ -111,11 +112,14 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
                 </button>
               </Link> 
               </Tooltip>
+              {
+                useAppState.login &&
               <Link>
                 <div className='bg-[#1F3F49] w-[50px] rounded-full ml-[320px] mt-[-43px] p-2 drop-shadow-xl hover:bg-white hover:text-black hover:border-2'>
                   <p className='text-2xl hover:text-black text-white pl-2' onClick={() => setOpen(!open)}>{data.charAt(0).toUpperCase()}</p>
                 </div>
               </Link>
+              }
             </div>
           }
 
@@ -128,7 +132,12 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
           <ul className='p-2'>
             <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link>Profile</Link></li>
             <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link to="/changePsw">Change Password</Link></li>
-            <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link to="/login">Log Out</Link></li>
+            <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'>
+              <span onClick={(e)=>{
+                e.stopPropagation()
+                logout()
+              }}>Log Out</span>
+            </li>
           </ul>
         </div>
       )}

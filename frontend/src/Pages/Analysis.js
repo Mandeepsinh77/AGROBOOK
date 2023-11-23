@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Chart from "react-apexcharts";
+// import {Bar} from 'react-apexcharts';
 import { useContext } from 'react';
 import { AppState } from "../App.js";
 import Tooltip from "@mui/material/Tooltip";
@@ -11,15 +12,16 @@ const Analysis = () => {
    const [items,setItems] = useState(0);
    const [totalPayment, setTotalPayment] = useState(0);
    const [countItems, setCountItems] = useState(0);
-   const countAnimationDuration = 2000;
    const [categories,setCategories] = useState(0);
    const [categoriesName, setCategoriesName] = useState([]);
    const [categoriesCount, setCategoriesCount] = useState([]);
+   const [monthlySales, setMonthlySales] = useState([]);
+   const [Months,setMonths] = useState([]);
+   const [MonthVal,setMonthVal] = useState([]);
    
    const useAppState = useContext(AppState);
     const userID = useAppState.UserId;
-
-
+    const monthly = {}
 
    async function categoriesGroupBy(){
     const requestData = {
@@ -82,6 +84,7 @@ const Analysis = () => {
         .then(data => {
           console.log(data);
           // Calculate the totalPayment
+          setMonthlySales(data);
           const total = data.reduce((total, transaction) => total + transaction.totalPayment, 0);
           setTotalPayment(total);
         })
@@ -150,11 +153,41 @@ const Analysis = () => {
          window.alert(err);
      } 
    }
+
+   async function groupSalesByMonth(){
+    const groupData = {};
+      monthlySales.forEach(entry=>{
+        const date = new Date(entry.date);
+        const options = {
+          month: 'short',
+          year: 'numeric'
+        };
+
+        const month = date.toLocaleString('default',options);
+
+        if(!groupData[month]) {
+          groupData[month] = [];
+        }
+        
+        groupData[month].push(entry);
+      });
+
+      Object.entries(groupData).forEach(([month,entries])=>{
+        const totalSales = entries.reduce((total,entry)=> total+entry.totalPayment,0);
+        monthly[month] = totalSales;
+      })
+      console.log(monthly)
+    setMonths(Object.keys(monthly));
+    setMonthVal(Object.values(monthly));
+    console.log(MonthVal)
+   }
+
    useEffect(()=>{
       Customers();
       Items();
       calculateTotalPayment(); 
       categoriesGroupBy();
+      groupSalesByMonth();
    },[count]); 
 
    useEffect(() => {
@@ -163,7 +196,7 @@ const Analysis = () => {
       setCount(count + 1);
     }, 1000);
   }, []);
-
+  
   return (
     <div className='mt-8 flex flex-col justify-center items-center content-center'>
      <div className='text-xl font-medium rounded mb-10 px-10 py-2 bg-[#1F3F49] text-white'>Overview:</div>
@@ -173,7 +206,7 @@ const Analysis = () => {
             <div className='text-3xl font-medium'>{customers.length}</div>
             <div>Customers</div>
          </div>
-         </Tooltip>
+         </Tooltip> 
          <Tooltip title="Number of items">
          <div className='mb-4 w-44 h-28 my-auto rounded text-white bg-[#6AB187] flex flex-col justify-center items-center content-center'>
             <div className='text-3xl font-medium'>{countItems}</div>
@@ -187,10 +220,9 @@ const Analysis = () => {
          </div>
          </Tooltip>
         </div>
-     <div className='mt-4 mb-12 lower_part w-[90%] md:flex flex-row place-content-around'>
-        <div className='pie_chart border-2 p-8'>
+     <div className='mt-4 mb-12 lower_part w-[90%] md:flex flex-row place-content-around p-2'>
+        <div className='pie_chart md:flex flex-row items-center border-2 mr-4 '>
          {/* <h3>Category</h3> */}
-           
          <Chart
          type='pie'
          width={400}
@@ -207,8 +239,18 @@ const Analysis = () => {
 
          </Chart>
         </div>
-        <div className='bar_chart border-2'>
-        <h3>Sales on a monthly basis</h3>
+        <div className='bar_chart border-2 p-8'>
+        <Chart 
+        type='bar'
+        width={600}
+        height={400}
+        series={[{ data: MonthVal }]}
+        options={{
+           title: { text: 'Sales month wise' },
+           noData: { text: 'Empty Data' },
+           xaxis: { categories: Months },
+         }}
+       />
         </div>
      </div>
     </div>

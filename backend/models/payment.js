@@ -5,6 +5,10 @@ const PaymentSchema = new Schema({
         type: String,
         require: true
     },
+    date: {
+        type: Date,
+        require: true,
+    },
     totalCost: {
         type: String,
         require: true
