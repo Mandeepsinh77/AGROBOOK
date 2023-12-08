@@ -16,6 +16,21 @@ function Invoice() {
     const navigate = useNavigate();
     const { data, shopname } = useData();
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const invoicePerPage = 6; 
+
+    const indexOfLastInvoice = currentPage * invoicePerPage;
+    const indexOfFirstInvoice = indexOfLastInvoice - invoicePerPage;
+    const currentInvoice = transactions.slice(indexOfFirstInvoice, indexOfLastInvoice);
+
+    const totalPages = Math.ceil(transactions.length / invoicePerPage);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);  
+        }
+    };
+
     // const handleInvoice=(customer)=>{
     //        navigate(`/bill?customerName=${customer.firstname} ${customer.lastname}&customerPhone=${customer.phoneno}`);
     // }
@@ -39,11 +54,11 @@ function Invoice() {
                 return response.json()
             })
                 .then(data => {
-                    setTransactions(data)
+                        setTransactions(data);
                     console.log(transactions)
                 })
                 .catch(error => {
-                    console.error('Error fetching Customers: ', error);
+                    console.error('Error fetching Invoices: ', error);
 
                 })
         }
@@ -75,8 +90,9 @@ function Invoice() {
                     <img src={nullImage} alt="Description of the image" />
                     <h3>No Data</h3>
                 </div>
-                ) : (
-            <div className='mt-8 flex justify-center items-center'>
+                ) : 
+                (
+            <div className='mt-8 flex flex-col justify-center items-center'>
                 <table className="w-3/4 border-collapse">
                     <thead className="text-center">
                         <tr>
@@ -101,9 +117,9 @@ function Invoice() {
                         </tr>
                     </thead>
                     <tbody>
-                        {transactions.filter((transaction) => transaction.customerName.toLowerCase().includes(query.toLowerCase()) || transaction.customerPhone.includes(query)).map((transaction, index) => (
+                        {currentInvoice.filter((transaction) => transaction.customerName.toLowerCase().includes(query.toLowerCase()) || transaction.customerPhone.includes(query)).map((transaction, index) => (
                             <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={transaction._id} >
-                                <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
+                                <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1 + (currentPage-1)*invoicePerPage}</p></td>
                                 <td className='border border-gray-300 px-4 py-2'>{transaction.date.slice(0,10)}</td>
                                 <td className='border border-gray-300 px-4 py-2'>{transaction.customerName}</td>
                                 {/* <td className='border border-gray-300 px-4 py-2'>{customer.lastname}</td> */}
@@ -119,7 +135,33 @@ function Invoice() {
                         ))}
                     </tbody>
                 </table>
+                <div className="mt-4 flex items-center justify-center" >
+                <button
+                    className={`mx-2 p-2 border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
 
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                    <button
+                        key={pageNumber}
+                        className={`mx-2 p-2 border ${currentPage === pageNumber ? 'bg-green-800 text-white rounded-full w-10 shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-full w-10 shadow-lg'}`}
+                        onClick={() => paginate(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                ))}
+
+                <button
+                    className={`mx-2 p-2 border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
             </div>
                 )}
         </div>

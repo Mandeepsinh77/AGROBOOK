@@ -65,7 +65,7 @@ router.post("/createitem", [
 
     try {
         //find user with req email
-        let item = await Item.findOne({ itemname: req.body.itemname, shopkeeperid: shopkeeperid})
+        let item = await Item.findOne({ itemname: { $regex: itemname, $options: 'i' }, shopkeeperid: shopkeeperid})
 
         //if user exist then send bad request
         if (item) {
@@ -231,6 +231,28 @@ router.post('/customers/update_status/:customerId', (req, res) => {
     }
 
     return res.json({ message: 'Status remains as status' });
+});
+
+router.post("/update_quantity", async (req, res) => {
+    const { itemname, quantity } = req.body;
+
+    try {
+
+        let item = await Item.findOne({ itemname });
+
+        if (!item) {
+            return res.status(404).json({ message: "Item not found" });
+        }
+
+        item.quantity = quantity;
+
+        await item.save();
+
+        return res.status(200).json({ message: "Quantity updated successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server error" });
+    }
 });
 
 module.exports = router

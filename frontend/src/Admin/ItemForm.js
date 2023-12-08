@@ -182,7 +182,7 @@ const ItemForm = () => {
                             </select>
                         </div>
                         <div className="item_input_row">
-                            <label htmlFor="item_cp" >Cost Price:</label><br />
+                            <label htmlFor="item_cp" >Cost Price (per kg/lit/unit):</label><br />
                             <input type="number" name="item_cp" id="item_cp" placeholder=' Enter Price ' 
                             value={formData.costprice}
                             required
@@ -190,7 +190,7 @@ const ItemForm = () => {
                             />
                         </div>
                         <div className="item_input_row">
-                            <label htmlFor="item_sp">Selling Price:</label><br />
+                            <label htmlFor="item_sp">Selling Price (per kg/lit/unit):</label><br />
                             <input type="number" name="item_sp" id="item_sp" placeholder=' Enter Selling Price ' 
                             value={formData.sellingprice}
                             required

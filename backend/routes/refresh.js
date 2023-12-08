@@ -17,4 +17,4 @@ const handleRefresh = async (req,res)=> {
     })
 }
 
-module.exports = handleRefresh ;
+module.exports = handleRefresh;

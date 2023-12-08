@@ -181,22 +181,23 @@ router.post('/confirm_cash_payment', async (req, res) => {
     }
 });
 
-router.post('/fetch_remaining_amount', async (req, res) => {
+router.post('/fetch_remaining_amount', async (req, res) => { 
     console.log("backend")
     console.log(req.body)
     try {
-        const { customerPhone } = req.body.customerPhone;
+        const { customerPhone } = req.body;
         const shopkeeperid = req.body.shopkeeperid;
         // Implement the logic to fetch the remaining amount from the database
         // Use customerPhone to find the specific customer's remaining amount
 
-        const result = await Payment.findOne({ customerphoneno: customerPhone, shopkeeperid: shopkeeperid  })
+        const result = await Payment.find({ customerphoneno: customerPhone, shopkeeperid: shopkeeperid  })
             .sort({ _id: -1 }) // Sort by the unique ID in descending order (most recent first)
             .limit(1)
-        if (result) {
+            console.log(result)
+        if (result.length>0) {
             // Send the previousRemainingAmount to the client
             console.log("backend result")
-            res.json({ previousRemainingAmount: result.remaining_amount });
+            res.json({ previousRemainingAmount: result[0].remaining_amount });
         } else {
             console.log("backend not found")
             res.status(404).json({ error: 'Previous remaining amount not found' });
@@ -257,6 +258,38 @@ router.get('/get_items_bill/:phoneno', async (req, res) => {
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.post('/latest_payments_non_zero_remaining', async (req, res) => {
+    try {
+        const { shopkeeperid } = req.body;
+
+        const latestPayments = await Payment.aggregate([
+            {
+                $match: {
+                    shopkeeperid: shopkeeperid,
+                    remaining_amount: { $ne: '0.00' }, // Use string comparison for a string field
+                },
+            },
+            {
+                $sort: { customerphoneno: 1, createdAt: -1 }
+            },
+            {
+                $group: {
+                    _id: '$customerphoneno',
+                    latestPayment: { $first: '$$ROOT' }
+                }
+            },
+            {
+                $replaceRoot: { newRoot: '$latestPayment' }
+            },
+        ]);
+
+        res.status(200).json({ message: 'Latest payments with non-zero remaining amount retrieved successfully', payments: latestPayments });
+    } catch (error) {
+        console.error('Error retrieving latest payments with non-zero remaining amount:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 

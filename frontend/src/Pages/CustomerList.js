@@ -15,25 +15,43 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import swal from 'sweetalert';
 import { useNavigate } from 'react-router-dom';
-import {FcViewDetails,FcSalesPerformance} from 'react-icons/fc';
+import {FcViewDetails,FcSalesPerformance} from 'react-icons/fc';     
 import {AiFillDelete,AiFillEdit} from 'react-icons/ai';
 import { useContext } from 'react';
 import { AppState } from "../App.js";
 import Tooltip from "@mui/material/Tooltip";
 
 function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setFormData ,setPayment,setinvoice}){
+    const [showLoader, setShowLoader] = useState(true);
     const[customers,setCustomers] = useState([]);
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
-    const [editcustomer, setEditcustomer] = useState({});
+    const [editcustomer, setEditcustomer] = useState([]);
     const [selected, setSelected] = useState(null);
     const [query, setQuery] = useState("");
     const [dataremain, setdataremain] = useState(0);
     const [customerStatus, setCustomerStatus] = useState({});
 
+
+
     const useAppState = useContext(AppState);
     const userID = useAppState.UserId;
     console.log(userID);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const customersPerPage = 6; 
+
+    const indexOfLastCustomer = currentPage * customersPerPage;
+    const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
+    const currentCustomers = customers.slice(indexOfFirstCustomer, indexOfLastCustomer);
+
+    const totalPages = Math.ceil(customers.length / customersPerPage);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);  
+        }
+    };
 
     const handleDeltecustomer = async (customerId) => {
         const confirmResult = await swal({
@@ -81,7 +99,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                 });
             }
         }
-    };
+    }; 
     const handleEditCustomer = async () => {
         try {
             const response = await fetch(`http://localhost:4000/add/updatecustomer/${selected._id}`, {
@@ -125,22 +143,26 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         setOpen2(false);
     };
     const handleClickOpen2 = (customer) => {
-        setSelected(customer);
+       console.log("Ashish")
+       console.log(customer);
+       setSelected(customer);
+      
         setEditcustomer({
-            firstname: selected.firstname,
-            middlename: selected.middlename,
-            lastname: selected.lastname,
-            email: selected.email,
-            address: selected.address,
-            city: selected.city,
-            state: selected.state,
-            country: selected.country,
-            phoneno: selected.phoneno,
+            firstname: customer.firstname,
+            middlename: customer.middlename,
+            lastname: customer.lastname,
+            email: customer.email,
+            address: customer.address,
+            city: customer.city,
+            state: customer.state,
+            country: customer.country,
+            phoneno: customer.phoneno,
         })
         setOpen2(true);
-    
+        
     }
-
+    console.log(selected);
+    console.log(editcustomer); 
     console.log(query);
 
     const handleSetSell = (index, customer) => {
@@ -154,27 +176,26 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         });
 
         setAddItem(false)
-        setContact(false)
-        setitemList(false)
+        setContact(false) 
+        setitemList(false)  
         setcategoryList(false)
-        setAddCustomer(false)
+        setAddCustomer(false) 
         setcustomerList(false)
         setPayment(false)
         setinvoice(false)
         setSell(true)
-        localStorage.setItem('name1','sell');
     }
 
     const handleClickOpen3 = async (customer) => {
         try {
-            console.log(customer);
-            const res = await fetch(`http://localhost:4000/payment/fetch_remaining_amount/${customer.phoneno}`, {
-                method: 'GET',
+            console.log(customer); 
+            const res = await fetch(`http://localhost:4000/payment/fetch_remaining_amount/${customer.phoneno}`, { 
+                method: 'GET', 
             });
             if (res.status === 200) { 
                 const data = await res.json();
                 console.log(data)
-                // const payment = data.payment; 
+                // const payment = data.payment;   
                 // console.log(payment[0].remaining_amount);
                 const remaining_amount = data.remainingAmount; 
                 console.log(remaining_amount)
@@ -183,7 +204,7 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                     [customer._id]: remaining_amount > 0 ? 'Pending' : 'Completed',    
                 }));
                 setdataremain(remaining_amount);
-            } 
+            }  
             else {
                 console.log('Error fetching payment details.');
             }
@@ -214,7 +235,10 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
             return response.json()
         })
         .then(data => {
-            setCustomers(data)
+            setTimeout(() => {
+                setCustomers(data)
+                setShowLoader(false);
+              }, 500);
         }) 
         .catch(error=>{
             console.error('Error fetching Customers: ',error);
@@ -226,19 +250,17 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
     }
 
     useEffect(()=>{
-        const name1 = localStorage.getItem('name1') ; 
-        if (name1 === "sell") setSell(true) ;
         fetchCustomers();
         const initialCustomerStatus = customers.reduce((status, customer) => {
             status[customer._id] = 'Status';
             return status;
         }, {});  
         setCustomerStatus(initialCustomerStatus);
-    },[]);
-
+    },[]); 
+ 
     return(
         <div className="container mx-auto">
-        <h1 className='mt-8 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Customer's Details</h1>
+        <h1 className='mt-8 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lgfont-bold font-[Poppins]'>Customer's Details</h1>
         <div className="mt-4  flex justify-center items-center ">
             <input
                 type="text"
@@ -253,55 +275,56 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
         </div>
         {customers.length == 0 ?
                 (<div className="flex flex-col items-center justify-center mt-36">
-                    <img src={nullImg} alt="Description of the image" />
-                    <h3>No Data</h3>
+                 <img src="https://assets-v2.lottiefiles.com/a/d5392796-1169-11ee-908e-b33ed8d96ca4/kW0SJwvz27.gif" className='text-green w-24 h-24 rounded-full' alt="Description of the image" />
+                 <img src={nullImg} alt="Description of the image" />
+                 <h3>No Data</h3>
                 </div>
                 ) : (
-        <div className='ml-8 mt-8 flex justify-center items-center'>
-            <table className="w-1/2 border-collapse">
+        <div className='ml-8 mt-8 flex flex-col justify-center items-center'>
+            <table className="w-1/2 border-collapse">  
                 <thead className="text-center">
-                    <tr>
+                    <tr> 
                         <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
-                                <div className="">CID </div>
+                                <div className="p-2 font-bold font-[Poppins]">CID </div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">First Name</div>
+                                <div className="font-bold font-[Poppins]">First Name</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Last Name</div>
+                                <div className="font-bold font-[Poppins]">Last Name</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Phone No</div>
+                                <div className="font-bold font-[Poppins]">Phone No</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Details</div>
+                                <div className="font-bold font-[Poppins]">Details</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Edit</div>
+                                <div className="font-bold font-[Poppins]">Edit</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Sale</div>
+                                <div className="font-bold font-[Poppins]">Sell</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Status</div>
+                                <div className="font-bold font-[Poppins]">Status</div>
                             </th>
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Check</div>
+                                <div className="font-bold font-[Poppins]">Check</div>
                             </th>
                             <th className=" rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Delete</div>
+                                <div className="font-bold font-[Poppins]">Delete</div>
                             </th>
                     </tr>
 
                 </thead>
                 <tbody>
-                    {customers.filter((customer)=>customer.firstname.toLowerCase().includes(query) || customer.lastname.toLowerCase().includes(query)||customer.phoneno.includes(query)).map((customer,index)=> (
+                    {currentCustomers.filter((customer)=>customer.firstname.toLowerCase().includes(query) || customer.lastname.toLowerCase().includes(query)||customer.phoneno.includes(query)).map((customer,index)=> (
                         <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={customer._id} >
-                            <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
-                            <td className='border border-gray-300 px-4 py-2'>{customer.firstname}</td>
-                            <td className='border border-gray-300 px-4 py-2'>{customer.lastname}</td>
-                            <td className='border border-gray-300 px-4 py-2'>{customer.phoneno}</td>
-                            <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
+                            <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1 + (currentPage - 1) * customersPerPage}</p></td>
+                            <td className='border border-gray-300 px-4 py-2 font-[Poppins]'>{customer.firstname}</td>
+                            <td className='border border-gray-300 px-4 py-2 font-[Poppins]'>{customer.lastname}</td>
+                            <td className='border border-gray-300 px-4 py-2 font-[Poppins]'>{customer.phoneno}</td>
+                            <td className='border border-gray-200 px-4 py-2 font-[Poppins] customer_link text-blue-800'>
                                 <Tooltip title='Customer Info'>
                                     <Button variant="outlined" onClick={() => handleClickOpen1(customer)}><FcViewDetails/> Details</Button>
                                 </Tooltip>
@@ -310,22 +333,22 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                                 <Tooltip title='Customer Info Edit'>
                                     <Button variant="outlined" onClick={() => handleClickOpen2(customer)}><AiFillEdit/> Edit</Button>
                                 </Tooltip>
-                            </td>
+                            </td> 
                             <td className='border border-gray-200 px-4 py-2 customer_link text-blue-800'>
                                 <Tooltip title='Sell to Customer'>
-                                    <Button variant="outlined" onClick={() => { handleSetSell(index, customer) }}><FcViewDetails /> Sale</Button>
-                                </Tooltip>
-                            </td>
+                                    <Button variant="outlined" onClick={() => { handleSetSell(index, customer) }}><FcViewDetails /> Sell</Button>
+                                </Tooltip> 
+                            </td>  
                             <td className='border border-gray-300 px-4 py-2 customer_link text-blue-500'>
                                     <a href="/status">
-                                        <span style={{ color: customerStatus[customer._id] === 'Pending' ? 'red' : customerStatus[customer._id] === 'Completed' ? 'green' : 'blue' }}>
+                                        <span className='font-[Poppins]' style={{ color: customerStatus[customer._id] === 'Pending' ? 'red' : customerStatus[customer._id] === 'Completed' ? 'green' : 'blue' }}>
                                             {customerStatus[customer._id]}
                                         </span>
                                     </a>
                             </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link'>
                                 <Tooltip title='Payment status'>
-                                    <Button variant="outlined" onClick={() => handleClickOpen3(customer)} style={{ color: "black", border: "2px solid black", fontWeight: "bold" }}> Check</Button>
+                                    <Button variant="outlined" onClick={() => handleClickOpen3(customer)} style={{ color: "black", border: "1px solid black", fontWeight: "bold" }}> Check</Button>
                                 </Tooltip>
                                 </td>
                             <td className='border border-gray-200 px-4 py-2 customer_link'>
@@ -337,6 +360,33 @@ function CustomerList({ setAddCustomer, setContact, setitemList, setAddItem, set
                     ))}
                 </tbody>
             </table>
+            <div className="mt-4 flex items-center justify-center" >
+                <button
+                    className={`mx-2 p-2 border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                    <button
+                        key={pageNumber}
+                        className={`mx-2 p-2 border ${currentPage === pageNumber ? 'bg-green-800 text-white rounded-full w-10 shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-full w-10 shadow-lg'}`}
+                        onClick={() => paginate(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                ))}
+
+                <button
+                    className={`mx-2 p-2 border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
 
         </div>
          )}

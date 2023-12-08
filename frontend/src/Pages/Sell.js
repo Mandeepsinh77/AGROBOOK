@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { AppState} from "../App.js";
 import Tooltip from "@mui/material/Tooltip";
 import nullImg from "../images/nullImg.png"
- 
+import robot from '../images/robot.gif'
 
 function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setPayment ,setInvoice }) {
     var today = new Date();
@@ -24,6 +24,21 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
      const [selectedItem, setSelectedItem] = useState([]);
      const [totalCost, setTotalCost] = useState(0);
      const [paymentProps, setPaymentProps] = useState({ customerDetails: {}, totalCost: 0 });
+
+     const [currentPage, setCurrentPage] = useState(1);
+     const itemPerPage = 6; 
+ 
+     const indexOfLastItem = currentPage * itemPerPage;
+     const indexOfFirstItem = indexOfLastItem - itemPerPage;
+     const currentItem = items.slice(indexOfFirstItem, indexOfLastItem);
+ 
+     const totalPages = Math.ceil(items.length / itemPerPage);
+ 
+     const paginate = (pageNumber) => {
+         if (pageNumber >= 1 && pageNumber <= totalPages) {
+             setCurrentPage(pageNumber);  
+         }
+     };
 
      async function fetchItems() {
         try{
@@ -107,7 +122,13 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
         // setAvailableQuantities(updatedQuantities);
 
         // Fetch the updated quantities for the specific item
-        fetch('http://localhost:4000/add/fetch_items')
+        fetch('http://localhost:4000/add/update_quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ itemname: item.itemname, quantity: item.quantity }),
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -115,15 +136,11 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                 return response.json();
             })
             .then(data => {
-                const updatedQuantities = { ...availableQuantities };
-                const selectedItemInData = data.find((dataItem) => dataItem.itemname === item.itemname);
-                if (selectedItemInData) {
-                    updatedQuantities[item.itemname] = selectedItemInData.quantity;
-                }
-                setAvailableQuantities(updatedQuantities);
+                // Handle the response if needed
+                console.log(data.message)
             })
             .catch(error => {
-                console.error('Error fetching Items: ', error);
+                console.error('Error updating quantity: ', error);
             });
     };
 
@@ -162,6 +179,26 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
         // Update both state variables
         setitems(updatedItems);
         setSelectedItem(updatedSelectedItems);
+        fetch('http://localhost:4000/add/update_quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ itemname: item.itemname, quantity: updatedItems.find((i) => i.itemname === item.itemname).quantity }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response if needed
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Error updating quantity: ', error);
+            });
       };
 
     useEffect(() => {
@@ -190,57 +227,6 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
     }, []);
 
     const handlePrintButtonClick = () => {
-        // console.log("hello world")
-
-        // Prepare the data to be sent to your server
-        // const dataToSave = {
-        //     customerId: formData.customerId,
-        //     customerName: formData.customerFirstname + ' ' + formData.customerLastname,
-        //     customerPhone: formData.customerPhone,
-        //     date: today,
-        //     // Include the total cost
-        //     items: selectedItem.map((item,index) => ({
-        //         itemNo:(index+1).toString(),
-        //         itemname: item.itemname,
-        //         costPrice: item.costprice,
-        //         sellingPrice: item.sellingprice,
-        //         unit:item.units,
-        //         quantity: item.quantity,
-        //         totalPriceOfItem:item.totalPrice
-        //     })),
-        //     totalPayment: totalCost
-        // };
-        // console.log("jmj")
-        // console.log(dataToSave)
-        // console.log("jmj")
-
-
-        // fetch('http://localhost:4000/save/save_transaction', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(dataToSave),
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error('Error saving transaction');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then((data) => {
-        //         console.log('Transaction saved successfully');
-        //         // Handle success as needed (e.g., reset the selected items)
-        //         setSelectedItem([]);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error saving transaction:', error);
-        //         // Handle errors as needed
-        //     });
-
-        // setShowPaymentPage(true);
-
-
         Swal.fire({
             title: 'Proceed to Payment?',
             text: 'Are you sure you want to proceed to payment?',
@@ -354,7 +340,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                     <h3>No Data</h3>
                 </div>
                 ) : (
-                        <div className='mt-6 flex justify-center items-center'>
+                        <div className='mt-6 flex flex-col justify-center items-center'>
 
                             <table className="w-1/2 border-collapse">
                                 <thead className="text-center " style={{ height: "50px" }}>
@@ -389,7 +375,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                                 <tbody>
                                     {items.filter((item) => item.itemname.toLowerCase().includes(query.toLowerCase()) || item.itemcategory.toLowerCase().includes(query.toLowerCase())).map((item, index) => (
                                         <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
-                                            <td className='border border-gray-300 px-4 py-2'>{index + 1}</td>
+                                            <td className='border border-gray-300 px-4 py-2'>{index + 1 + (currentPage-1)*itemPerPage}</td>
                                             <td className='border border-gray-300 px-4 py-2'>{item.itemname}</td>
                                             <td className='border border-gray-300 px-4 py-2'>{item.itemcategory}</td>
                                             <td className='border border-gray-300 px-4 py-2'>{item.costprice}</td>
@@ -397,73 +383,123 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                                             <td className='border border-gray-300 px-4 py-2'>{item.quantity}</td>
                                             <td className='border border-gray-300 px-4 py-2'>{item.units}</td>
                                             <td className='border border-gray-300 px-4 py-2 cursor-pointer'>
-                                                <Tooltip title='Add a Item'><button className='w-6 h-6 rounded-full text-white bg-gray-700 ' onClick={() => handleAddClick(item)}>
-                                                <FontAwesomeIcon icon={faPlus} />
-                                            </button>
-                                            </Tooltip>
-                                            </td>
+                                                        {item.quantity > 0 ? (
+                                                            <Tooltip title='Add a Item'>
+                                                                <button className='w-6 h-6 rounded-full text-white bg-gray-700' onClick={() => handleAddClick(item)}>
+                                                                    <FontAwesomeIcon icon={faPlus} />
+                                                                </button>
+                                                            </Tooltip>
+                                                        ) : (
+                                                            // Render a disabled button when quantity is 0
+                                                            <Tooltip title="Item Not Availabel">
+
+                                                            <button className='w-6 h-6 rounded-full text-white bg-gray-400 cursor-not-allowed' disabled>
+                                                                <FontAwesomeIcon icon={faPlus} />
+                                                            </button>
+                                                            </Tooltip>
+                                                        )}
+                                                    </td>
                                             {/* <td className='border border-gray-300 px-4 py-2 '><input type="text" className="narrow-column border-b-4" /></td> */}
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
+                            <div className="mt-4 flex items-center justify-center" >
+                <button
+                    className={`mx-2 p-2 border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
 
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                    <button
+                        key={pageNumber}
+                        className={`mx-2 p-2 border ${currentPage === pageNumber ? 'bg-green-800 text-white rounded-full w-10 shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-full w-10 shadow-lg'}`}
+                        onClick={() => paginate(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                ))}
+
+                <button
+                    className={`mx-2 p-2 border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
                         </div>
                     )}
                     </div>
                 </div>
             </div>
-
             <div className='ml-5 md:w-2/6 w-2/5 '>
-                <div className=' border border-slate-500 mt-2 ml-16 w-4/5 bg-green-500 rounded-md'>
-                    <div className=' ml-3 p-1 font-bold'>
+                <div className='w-full border mt-2 bg-green-500 rounded-md'>
+                    <div className='p-1 font-bold text-center text-white'>
                         <span>Date: </span><span>{new Date().toDateString() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + String(seconds).padStart(2, '0')}</span>
                     </div>
                 </div>
-                <div className='mt-4 h-96 border border-slate-500 rounded-md   overflow-y-auto p-4' >
+                <div className='mt-4 w-full h-96 border-4 border-slate-500 rounded-md   overflow-y-auto p-4' >
                     <h2 className='font-bold py-2 text-white text-center rounded-xl shadow-xl bg-gray-700 w-full'> Selected Item Details : </h2>
 
                     {selectedItem.length === 0 ? (
-                        <p className='text-center font-bold mt-28'>Oops, No items selected.</p>
+                        <div className='flex flex-col p-2'>
+                        <img src={robot} alt="" />
+                        <p className='font-bold text-xl mx-auto'>Please Enter Item......</p>
+                    </div>
                     ) : (
-                        <ul>
+                        <ul className="list-none">
                             {selectedItem.map((item, index) => (
-                                <li key={index} className="item-details">
+                                <li key={index} className="bg-white p-3 my-2 rounded-md shadow-md flex justify-between items-center">
                                     <div className="item-info">
-                                        <div className='flex'>
-                                            <span className='font-bold'>{index + 1 + "."}</span>
-                                            <span className='font-bold'>{item.itemname}</span><br />
+                                        <div className='flex items-center mb-1'>
+                                            <span className='font-bold text-md'>{index + 1 + "."}</span>
+                                            <span className='font-bold ml-1 text-md'>{item.itemname}</span>
                                         </div>
-                                        <span className='below-span'>Quantity: {item.quantity} {item.units}</span>
-                                        <span className='below-span'>Price: {item.sellingprice}</span>
-                                        <span className='below-span'>Category: {item.itemcategory}</span>
+                                        <div className='mb-1'>
+                                            <span className='below-span text-sm'>Quantity: {item.quantity} {item.units}</span>
+                                        </div>
+                                        <div className='mb-1'>
+                                            <span className='below-span text-sm'>Price: {item.sellingprice}</span>
+                                        </div>
+                                        <div className='mb-1'>
+                                            <span className='below-span text-sm'>Category: {item.itemcategory}</span>
+                                        </div>
                                     </div>
-                                    <p className="">
-                                        <Tooltip title='Delete this Item'>
-                                        <button onClick={() => handleRemoveItem(index, item)}> <FontAwesomeIcon icon={faTrash} /></button>
-                                        </Tooltip>
-                                    </p>
-                                    <div className="font-bold">
-                                        <span>Total Price:</span><br />
-                                        <span className='ml-2'>
-                                            {item.totalPrice}
-                                        </span>
+                                    <div className="flex items-center">
+                                        <p className="mr-2">
+                                            <Tooltip title='Delete this Item'>
+                                                <button className="text-red-500" onClick={() => handleRemoveItem(index, item)}>
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </button>
+                                            </Tooltip>
+                                        </p>
+                                        <div className="font-bold">
+                                            <span className='text-md'>Total Price:</span><br />
+                                            <span className='ml-1 text-lg'>
+                                                {item.totalPrice}
+                                            </span>
+                                        </div>
                                     </div>
                                 </li>
                             ))}
                         </ul>
                     )}
                 </div>
-                <div className="font-bold flex justify-between">
-                    <span className='ml-10 mt-5'>Total Cost:</span><br />
-                    <span className='mr-10 mt-5'>{totalCost}</span>
+                <div className="font-bold flex justify-between items-center mt-5">
+                    <span className='ml-4 text-lg'>Total Cost:</span>
+                    <span className='mr-4 text-lg'>{totalCost}</span>
                 </div>
                 <Tooltip title='Next step to Payment'>
-                <button onClick={handlePrintButtonClick}
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 ml-36 mt-5 rounded"
-                >
-                    Proceed To Payment
-                </button>
+                    <button
+                        onClick={handlePrintButtonClick}
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 mt-3 rounded w-full"
+                    >
+                        Proceed To Payment &rarr;
+                    </button>
                 </Tooltip>
             </div>
         </div>

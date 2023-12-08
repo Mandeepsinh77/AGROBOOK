@@ -25,6 +25,21 @@ function ItemList(){
     const useAppState = useContext(AppState);
     const userID = useAppState.UserId;
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemPerPage = 6; 
+
+    const indexOfLastItem = currentPage * itemPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemPerPage;
+    const currentItem = items.slice(indexOfFirstItem, indexOfLastItem);
+
+    const totalPages = Math.ceil(items.length / itemPerPage);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);  
+        }
+    };
+
     const handleEditItem = async ()=>{
         console.log(editItem);
         console.log(selected._id);
@@ -63,12 +78,12 @@ function ItemList(){
         setSelected(item);
         console.log(selected);
         setEditItem({
-            itemname:selected.itemname,
-            itemcategory:selected.itemcategory,
-            costprice:selected.costprice,
-            sellingprice:selected.sellingprice,
-            quantity:selected.quantity,
-            units:selected.units,
+            itemname:item.itemname,
+            itemcategory:item.itemcategory,
+            costprice:item.costprice,
+            sellingprice:item.sellingprice,
+            quantity:item.quantity,
+            units:item.units,
         })
         setOpen(true);
     }
@@ -176,7 +191,7 @@ function ItemList(){
                     <h3>No Data</h3>
                 </div>
                 ) : (
-            <div className='mt-8 flex justify-center items-center'>
+            <div className='mt-8 flex flex-col justify-center items-center'>
 
                 <table className=" border-collapse">
                     <thead className="text-center">
@@ -220,9 +235,9 @@ function ItemList(){
                         </tr>
                     </thead>
                     <tbody>
-                        {items.filter((item) => item.itemname.toLowerCase().includes(query.toLowerCase()) || item.itemcategory.toLowerCase().includes(query.toLowerCase())).map((item, index) => (
+                        {currentItem.filter((item) => item.itemname.toLowerCase().includes(query.toLowerCase()) || item.itemcategory.toLowerCase().includes(query.toLowerCase())).map((item, index) => (
                             <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
-                                <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
+                                <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1 + (currentPage-1)*itemPerPage}</p></td>
                                 <td className='border border-gray-300 px-4 py-2'>{item.itemname}</td>
                                 <td className='border border-gray-300 px-4 py-2'>{item.itemcategory}</td>
                                 <td className='border border-gray-300 px-4 py-2'>{item.costprice}</td>
@@ -247,17 +262,42 @@ function ItemList(){
                 <DialogTitle style={{backgroundColor: '#6AB187'}} className='bg-green-700 text-white font-bold w-full h-full'>Edit Customer's Details</DialogTitle>
                 <DialogContent className='mt-4' style={{ height: '400px', overflowY: 'auto' }}>
                     <TextField autoFocus style={{ marginBottom: "1rem" }} className='w-full' value={editItem.itemname} onChange={(e) => setEditItem({ ...editItem, itemname: e.target.value })} label="Item Name" type="text" />
-                    <TextField autoFocus style={{ marginBottom: "1rem" }} className='w-full' value={editItem.itemcategory} onChange={(e) => setEditItem({ ...editItem, itemcategory: e.target.value })} label="Item Category" type="text" />
                     <TextField autoFocus style={{ marginBottom: "1rem" }} className='w-full' value={editItem.costprice} onChange={(e) => setEditItem({ ...editItem, costprice: e.target.value })} label="Cost Price" type="text" />
                     <TextField autoFocus style={{ marginBottom: "1rem" }} className='w-full' value={editItem.sellingprice} onChange={(e) => setEditItem({ ...editItem, sellingprice: e.target.value })} label="Selling Price" type="email" />
                     <TextField autoFocus style={{ marginBottom: "1rem" }} className='w-full' value={editItem.quantity} onChange={(e) => setEditItem({ ...editItem, quantity: e.target.value })} label="Quantity" type="text" />
-                    <TextField autoFocus style={{ marginBottom: "1rem" }} className='w-full' value={editItem.units} onChange={(e) => setEditItem({ ...editItem, units: e.target.value })} label="Units" type="text" />
                 </DialogContent>
                 <DialogActions>
                     <Button style={{ border: "1px solid #6AB187", color: "#6AB187" }} onClick={handleClose2}>Cancel</Button>
                     <Button style={{ backgroundColor: "#6AB187", color: "white" }} onClick={handleEditItem}>Edit</Button>
                 </DialogActions>
             </Dialog>
+            <div className="mt-4 flex items-center justify-center" >
+                <button
+                    className={`mx-2 p-2 border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                    <button
+                        key={pageNumber}
+                        className={`mx-2 p-2 border ${currentPage === pageNumber ? 'bg-green-800 text-white rounded-full w-10 shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-full w-10 shadow-lg'}`}
+                        onClick={() => paginate(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                ))}
+
+                <button
+                    className={`mx-2 p-2 border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
             </div>
              )}
         </div>

@@ -130,7 +130,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
       {open && (
         <div className='bg-[#1F3F49] w-full md:w-1/2 lg:w-1/6 p-2 mx-auto mt-5 md:mt-20 lg:mt-20 lg:mr-24 rounded-lg block absolute right-10 z-50'>
           <ul className='p-2'>
-            <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link>Profile</Link></li>
+            {/* <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link>Profile</Link></li> */}
             <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link to="/changePsw">Change Password</Link></li>
             <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'>
               <span onClick={(e)=>{

@@ -16,11 +16,22 @@ function CategoryList() {
   const useAppState = useContext(AppState);
   const userID = useAppState.UserId;
 
-  useEffect(() => {
-    fetchCategory();
-    console.log(categories[0]);
-  }, []); // Empty dependency array means this effect runs once on component mount
+  const [currentPage, setCurrentPage] = useState(1);
+    const categoryPerPage = 6; 
 
+    const indexOfLastCategory = currentPage * categoryPerPage;
+    const indexOfFirstCategory = indexOfLastCategory - categoryPerPage;
+    const currentCategory = categories.slice(indexOfFirstCategory, indexOfLastCategory);
+
+    const totalPages = Math.ceil(categories.length / categoryPerPage);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);  
+        }
+    };
+
+  
   const handleAddCategory = (e) => {
     if (newCategory.trim() === "") {
       swal({
@@ -74,7 +85,7 @@ function CategoryList() {
       })
       .then((data) => {
         // console.log(data);
-        setCategories(data);
+          setCategories(data);
         console.log(categories)
       })
       .catch((error) => {
@@ -155,6 +166,11 @@ function CategoryList() {
   //     setChangeColor({ selectedRow  });
   //   }
   // }
+  useEffect(() => {
+    fetchCategory();
+    console.log(categories[0]);
+  }, []); // Empty dependency array means this effect runs once on component mount
+
   return ( 
     <div className="container mx-auto">
       <h1 className='mt-7 font-bold bg-gray-700 w-full h-full text-white text-center mx-auto p-3 rounded-full uppercase shadow-lg'>Category's Details</h1>
@@ -179,7 +195,7 @@ function CategoryList() {
           <h3>No Data</h3>
         </div>
       ) : (
-      <div className="mt-8 flex justify-center items-center">
+      <div className="mt-8 flex flex-col justify-center items-center">
         <table className="w-1/2 border-collapse">
           <thead className="text-center">
             <tr>
@@ -193,10 +209,10 @@ function CategoryList() {
             </tr>
           </thead>
           <tbody> 
-            {categories? categories && categories.map((category, index) => (
+            {currentCategory? currentCategory && currentCategory.map((category, index) => (
               // {console.log(category.category_name)}
               <tr className="text-center capitalize category_row hover:border-2 hover:border-black hover:rounded-md" style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
-                <td className='border border-gray-300 px-2 py-2 ml-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p>
+                <td className='border border-gray-300 px-2 py-2 ml-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1 + (currentPage-1)*categoryPerPage}</p>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {category.category_name}
@@ -210,6 +226,33 @@ function CategoryList() {
             )) : "No Data"}
           </tbody>
         </table>
+        <div className="mt-4 flex items-center justify-center" >
+                <button
+                    className={`mx-2 p-2 border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                    <button
+                        key={pageNumber}
+                        className={`mx-2 p-2 border ${currentPage === pageNumber ? 'bg-green-800 text-white rounded-full w-10 shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-full w-10 shadow-lg'}`}
+                        onClick={() => paginate(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                ))}
+
+                <button
+                    className={`mx-2 p-2 border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed rounded-md shadow-lg' : 'hover:bg-green-800 hover:text-white rounded-md shadow-lg'}`}
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
       </div>
       )}
     </div>

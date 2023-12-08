@@ -14,6 +14,7 @@ import Analysis from "./Analysis.js";
 import Payment from './Payment.js';
 import Transaction from "./Transaction.js";
 import Invoice from "./Invoice.js";
+import Report from "./Reports.js";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 // import { set } from "mongoose";
 // import { Link } from 'react-router-dom'
@@ -57,18 +58,19 @@ export default function Dashboard() {
     if(name === 'itemList') setitemList(true) ;
     if(name === 'categoryList') setcategoryList(true) ;
     if(name === 'invoice') setInvoice(true) ;
+    if(name === 'reports') setReports(true);
    }, [])
 
   return (
     <>
       <div className='md:h-20 h-12'>
-                <Navbar links={links} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setAnalysis={setAnalysis} setTransaction={setTransaction} setInvoice={setInvoice}/>
+                <Navbar links={links} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setAnalysis={setAnalysis} setTransaction={setTransaction} setInvoice={setInvoice} setReports={setReports}/>
      </div>
       <div className="flex flex-row mb-2 ">
         <div className="md:w-1/6 w-2/4 bg-gray-700 my_side_bar mt-1">
           <table className="place-items-center w-full text-white capitalize md:text-xl font-medium tracking-wide">
             <tr
-              className={` mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+              className={` mt-1 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 analysis ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
@@ -93,6 +95,7 @@ export default function Dashboard() {
                   setcustomerList(false);
                   setTransaction(false);
                   setInvoice(false);
+                  setReports(false)
                   setAnalysis(true);
                   // localStorage.setItem('name','analysis');
                 }}
@@ -101,7 +104,7 @@ export default function Dashboard() {
               </Link>
               </Tooltip>
             </tr>
-            <tr className={` mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+            <tr className={` mt-1 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 transaction ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}>
             <Tooltip title='Go to Transaction List'>
@@ -118,6 +121,7 @@ export default function Dashboard() {
                   setcustomerList(false);
                   setAnalysis(false);
                   setInvoice(false);
+                  setReports(false)
                   setTransaction(true);
                   localStorage.setItem('name','transaction');
                 }}
@@ -127,7 +131,7 @@ export default function Dashboard() {
               </Tooltip>
             </tr>
             <tr
-              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+              className={`mt-1 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 customerList ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
@@ -145,6 +149,7 @@ export default function Dashboard() {
                   setPayment(false);
                   setTransaction(false);
                   setInvoice(false);
+                  setReports(false)
                   setcustomerList(true);
                   localStorage.setItem('name','customerList');
                 }}
@@ -154,7 +159,7 @@ export default function Dashboard() {
               </Tooltip>
             </tr>
             <tr
-              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+              className={`mt-1 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 itemList ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
@@ -172,6 +177,7 @@ export default function Dashboard() {
                   setTransaction(false);
                   setcustomerList(false);
                   setInvoice(false);
+                  setReports(false)
                   setitemList(true);
                   localStorage.setItem('name','itemList');
                 }}
@@ -181,7 +187,7 @@ export default function Dashboard() {
               </Tooltip>
             </tr>
             <tr
-              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+              className={`mt-1 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 categoryList ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
@@ -199,6 +205,7 @@ export default function Dashboard() {
                   setPayment(false);
                   setTransaction(false);
                   setInvoice(false);
+                  setReports(false)
                   setcategoryList(true);
                   localStorage.setItem('name','categoryList');
                 }}
@@ -208,7 +215,7 @@ export default function Dashboard() {
               </Tooltip>
             </tr>
             <tr
-              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+              className={`mt-1 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 invoice ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
@@ -226,6 +233,7 @@ export default function Dashboard() {
                   setPayment(false);
                   setTransaction(false);
                   setcategoryList(false);
+                  setReports(false)
                   setInvoice(true);
                   localStorage.setItem('name','invoice');
                 }}
@@ -234,13 +242,14 @@ export default function Dashboard() {
               </Link>
               </Tooltip>
             </tr>
-            {/* <tr
-              className={`mt-2 hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
+            <tr
+              className={` hover:bg-white hover:rounded-l-full hover:text-black border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${
                 reports ? "bg-white text-[#1F3F49] rounded-l-full" : ""
               }`}
             >
+              <Tooltip title='Get Reports'>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setitemList(false);
@@ -253,16 +262,19 @@ export default function Dashboard() {
                   setTransaction(false);
                   setcategoryList(false);
                   setInvoice(false);
+                  setReports(true);
+                  localStorage.setItem('name','reports');
                 }}
               >
                Reports
               </Link>
-            </tr> */}
+              </Tooltip>
+            </tr>
             <tr className="hover:uppercase mt-4 h-20 flex  hover:bg-gray-300 items-center  justify-center  cursor-pointer"></tr>
           </table>
         </div>
         <div className='md:w-3/4 w-2/4 ml-72'>
-                    {itemList ? <Itemtable /> : contact ? <Contact /> : addCustomer ? <AddCustomer /> : addItem ? <ItemForm /> : categoryList ? <CategoryList /> : customerList ? <CustomerList setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData} setinvoice={setInvoice} /> : sell ? <Sell formData={formData} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData}  setInvoice={setInvoice} /> : payment ? <Payment />: transaction ? <Transaction />: invoice ? <Invoice /> : analysis ? <Analysis />: <Analysis/>}
+                    {itemList ? <Itemtable /> : contact ? <Contact /> : addCustomer ? <AddCustomer /> : addItem ? <ItemForm /> : categoryList ? <CategoryList /> : customerList ? <CustomerList setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData} setinvoice={setInvoice} /> : sell ? <Sell formData={formData} setAddCustomer={setAddCustomer} setitemList={setitemList} setContact={setContact} setAddItem={setAddItem} setcategoryList={setcategoryList} setcustomerList={setcustomerList} setPayment={setPayment} setSell={setSell} setFormData={setFormData}  setInvoice={setInvoice} /> : payment ? <Payment />: transaction ? <Transaction />: invoice ? <Invoice /> : reports ? <Report />: analysis ? <Analysis />: <Analysis/>}
                 </div>
       </div>
     </>

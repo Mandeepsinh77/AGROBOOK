@@ -27,7 +27,7 @@ import Analysis from './Pages/Analysis';
 import Payment from "./Pages/Payment.js";
 import Bill from './Pages/Bill';
 import Invoice from './Pages/Invoice.js';
-
+import Report from './Pages/Reports.js'
 import PersistLogin from './component/PersistLogin.js';
 
 const AppState = createContext();
@@ -50,12 +50,12 @@ function App() {
               <Route path="/payment" element={<Payment />} />
           </Route>
 
-          {/* {
+          {
             login ?
-              <Route path="/" element={<Dashboard />} />
-              : */}
+              <Route path="/analysis" element={<Dashboard />} />
+              :
               <Route path="/" element={<HomePage />} />
-          {/* } */}
+          }
 
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<Login />} />
@@ -79,6 +79,7 @@ function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/bill" element={<Bill />} />
+          <Route path="/reports" element={<Report />} />
         </Routes>
         </BrowserRouter>
       </div>

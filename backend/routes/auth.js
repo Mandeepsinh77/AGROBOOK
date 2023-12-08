@@ -104,7 +104,7 @@ router.post("/login", [
         //if user exist then check password
 
         if (password != user.password) {
-            return res.status(400).json({ message: "please Enter correct creadencial - password incorrect" })
+            return res.status(400).json({ message: "please Enter correct credentials - password incorrect" })
         }
 
         const data = {
